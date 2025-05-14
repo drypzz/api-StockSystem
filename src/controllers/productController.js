@@ -35,7 +35,7 @@ class ProductController {
                 return res.status(400).json({ message: "Todos os campos sao obrigatórios" });
             };
 
-            const findCategoryId = await Category.findOne({ where: { categoryId } });
+            const findCategoryId = await Category.findOne({ where: { id: categoryId } });
             if (!findCategoryId) {
                 return res.status(400).json({ message: "Categoria não encontrada" });
             };

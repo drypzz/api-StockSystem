@@ -5,6 +5,10 @@ require('dotenv').config();
 const database = require("./src/config/database");
 const port = process.env.API_PORT || 3000;
 
+
+const LoginController = require("./src/middlewares/auth.login");
+const RegisterController = require("./src/middlewares/auth.register");
+
 const userRoutes = require("./src/routes/userRoutes");
 const orderRoutes = require("./src/routes/orderRoutes");
 const categoryRoutes = require("./src/routes/categoryRoutes");
@@ -12,12 +16,15 @@ const productRoutes = require("./src/routes/productRoutes");
 
 app.use(express.json());
 
+app.post("/api/v1/login", LoginController.login);
+app.post("/api/v1/register", RegisterController.register);
+
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", orderRoutes);
 app.use("/api/v1", categoryRoutes);
 app.use("/api/v1", productRoutes);
 
-database.db.sync({ force: false })
+database.db.sync({ force: true })
 .then(() => {
     app.listen(Number(port), () => {
         console.log(`🚀 Server is running on http://localhost:${port}`)

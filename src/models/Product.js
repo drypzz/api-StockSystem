@@ -18,6 +18,9 @@ class Product {
             quantity: {
                 type: database.db.Sequelize.INTEGER
             },
+            description: {
+                type: database.db.Sequelize.STRING
+            },
             categoryId: {
                 type: database.db.Sequelize.INTEGER,
                 references: {

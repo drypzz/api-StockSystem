@@ -87,12 +87,11 @@ class CategoryController {
             const product = await Product.findAll({ where: { categoryId: id } });
                 
             if (product.length > 0) {
-                await Product.destroy({ where: { categoryId: id } });
+                return res.status(400).json({ message: "Não é possível deletar a categoria, pois existem produtos vinculados a ela" });
             };
     
             await Category.destroy();
-    
-            res.json({ message: `Categoria deletada com sucesso${product.length > 0 ? ` junto com outros ${product.length} produtos` : ""}`});
+            res.json({ message: "Categoria deletada com sucesso" });
         } catch (error) {
             res.status(500).json({ message: "Erro ao deletar a categoria", error });
         };
