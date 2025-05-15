@@ -2,11 +2,12 @@ const Sequelize = require("sequelize");
 require("dotenv").config();
 
 class Database {
+    
     constructor() {
-        this.init();
+        this.init(); // Inicializa a conexão com o banco de dados
     };
 
-    init() {
+    init() { // Cria a conexão com o banco de dados
         this.db = new Sequelize(
             (process.env.DATABASE_NAME || "database"),
             (process.env.DATABASE_USER || "root"),

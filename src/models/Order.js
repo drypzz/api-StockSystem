@@ -1,6 +1,7 @@
 const database = require("../config/database");
 const Product = require("./Product");
 const User = require("./User");
+const OrderProduct = require("./OrderProduct");
 
 const OrderModel = database.db.define("order", {
     id: {
@@ -17,7 +18,7 @@ const OrderModel = database.db.define("order", {
     },
 });
 
-OrderModel.belongsToMany(Product, { through: 'order_products' });
-Product.belongsToMany(OrderModel, { through: 'order_products' });
+OrderModel.belongsToMany(Product, { through: OrderProduct });
+Product.belongsToMany(OrderModel, { through: OrderProduct });
 
 module.exports = OrderModel;

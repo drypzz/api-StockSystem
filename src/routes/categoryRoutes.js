@@ -5,10 +5,178 @@ const categoryController = require("../controllers/categoryController");
 const TokenController = require("../middlewares/auth.token");
 
 router.use(TokenController.token);
+
+/**
+ * @swagger
+ * tags:
+ *   name: Categories
+ *   description: Operações relacionadas a categorias de produtos
+ */
+
+/**
+ * @swagger
+ * /category:
+ *   get:
+ *     summary: Lista todas as categorias
+ *     tags: [Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de categorias
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 categorys:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Category'
+ *       500:
+ *         description: Erro interno do servidor
+ */
 router.get("/category", categoryController.getAll);
+
+/**
+ * @swagger
+ * /category/{id}:
+ *   get:
+ *     summary: Retorna uma categoria pelo ID
+ *     tags: [Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da categoria
+ *     responses:
+ *       200:
+ *         description: Categoria encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
+ *       404:
+ *         description: Categoria não encontrada
+ *       500:
+ *         description: Erro interno do servidor
+ */
 router.get("/category/:id", categoryController.getByID);
+
+/**
+ * @swagger
+ * /category:
+ *   post:
+ *     summary: Cria uma nova categoria
+ *     tags: [Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Eletrônicos
+ *     responses:
+ *       201:
+ *         description: Categoria criada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 newcategory:
+ *                   $ref: '#/components/schemas/Category'
+ *       400:
+ *         description: Campo obrigatório ausente ou categoria já registrada
+ *       500:
+ *         description: Erro interno do servidor
+ */
 router.post("/category", categoryController.create);
+
+/**
+ * @swagger
+ * /category/{id}:
+ *   put:
+ *     summary: Atualiza uma categoria pelo ID
+ *     tags: [Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da categoria
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Informática
+ *     responses:
+ *       200:
+ *         description: Categoria atualizada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 category:
+ *                   $ref: '#/components/schemas/Category'
+ *       400:
+ *         description: Nome já registrado
+ *       404:
+ *         description: Categoria não encontrada
+ *       500:
+ *         description: Erro interno do servidor
+ */
 router.put("/category/:id", categoryController.update);
+
+/**
+ * @swagger
+ * /category/{id}:
+ *   delete:
+ *     summary: Deleta uma categoria pelo ID
+ *     tags: [Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID da categoria
+ *     responses:
+ *       200:
+ *         description: Categoria deletada com sucesso
+ *       400:
+ *         description: Existem produtos vinculados a essa categoria
+ *       404:
+ *         description: Categoria não encontrada
+ *       500:
+ *         description: Erro interno do servidor
+ */
 router.delete("/category/:id", categoryController.delete);
 
 module.exports = router;
