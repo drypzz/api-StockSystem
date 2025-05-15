@@ -1,5 +1,4 @@
-const Product = require("../models/Product");
-const Category = require("../models/Category");
+const { Product, Category } = require("../models");
 
 class ProductController {
     
@@ -70,21 +69,21 @@ class ProductController {
             };
 
             // Atualiza os campos do produto
-            if (name) Product.name = name;
-            if (price) Product.price = price;
-            if (quantity) Product.quantity = quantity;
+            if (name) product.name = name;
+            if (price) product.price = price;
+            if (quantity) product.quantity = quantity;
 
             // Atualiza e verifica se a categoria existe
-            if (categoryId && categoryId !== Product.categoryId) {
+            if (categoryId && categoryId !== product.categoryId) {
                 const findCategoryId = await Product.findOne({ where: { categoryId } });
                 if (!findCategoryId) {
                     return res.status(400).json({ message: "Categoria não encontrada" });
                 };
-                Product.categoryId = categoryId;
+                product.categoryId = categoryId;
             };
             
             // Salva as alterações
-            await Product.save();
+            await product.save();
     
             return res.status(200).json({ message: "Produto atualizado com sucesso", product });
         } catch (error) {

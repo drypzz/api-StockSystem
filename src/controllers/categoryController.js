@@ -1,5 +1,4 @@
-const Category = require('../models/Category');
-const Product = require('../models/Product');
+const { Category, Product } = require("../models");
 
 class CategoryController {
     
@@ -56,30 +55,31 @@ class CategoryController {
         try {
             const id = Number(req.params.id);
             const { name } = req.body;
-            
+
             // Verificar se a categoria existe
             const category = await Category.findByPk(id);
             if (!category) {
                 return res.status(404).json({ message: "Categoria não encontrada" });
             };
 
-            // Atualiza e Verifica se a categoria já esta cadastrada
-            if (name && name !== Category.name) {
-                const findCategoryId = await Category.findOne({ where: { name } });
-                if (findCategoryId) {
-                    return res.status(400).json({ message: "Categoria ja registrada" });
-                };
-                Category.name = name;
+            // Verifica se o novo nome é diferente e se já está em uso
+            if (name && name !== category.name) {
+                const findCategory = await Category.findOne({ where: { name } });
+                if (findCategory) {
+                    return res.status(400).json({ message: "Categoria já registrada" });
+                }
+                category.name = name;
             };
-            
-            // Atualiza os campos da categoria
-            await Category.save();
-    
+
+            // Salva a categoria atualizada
+            await category.save();
+
             return res.status(200).json({ message: "Categoria atualizada com sucesso", category });
         } catch (error) {
             return res.status(500).json({ message: "Erro ao atualizar a categoria", error: error.message });
         };
     };
+
 
     static async delete(req, res) {
         try {

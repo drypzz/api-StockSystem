@@ -33,7 +33,7 @@ app.use("/api/v1", categoryRoutes);
 app.use("/api/v1", productRoutes);
 
 // Inicializa o banco de dados e força a sincronização
-database.db.sync({ force: true })
+database.db.sync({ force: false })
 .then(() => {
     app.listen(Number(port), () => {
         console.log(`Servidor rodando em http://localhost:${port}`)

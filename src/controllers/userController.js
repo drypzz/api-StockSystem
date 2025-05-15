@@ -1,5 +1,4 @@
-const User = require("../models/User");
-const Order = require("../models/Order");
+const { Order, User } = require("../models");
 
 class UserController {
 

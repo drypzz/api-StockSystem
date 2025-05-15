@@ -1,7 +1,4 @@
-const Order = require("../models/Order");
-const User = require("../models/User");
-const Product = require("../models/Product");
-const OrderProduct = require("../models/OrderProduct");
+const { Order, Product, OrderProduct, User } = require("../models");
 
 class OrderController {
     
@@ -101,21 +98,43 @@ class OrderController {
     static async delete(req, res) {
         try {
             const id = Number(req.params.id);
-            
-            // Verificar se o pedido existe
-            const order = await Order.findByPk(id);
+
+            // Carrega pedido com produtos e quantidade do OrderProduct
+            const order = await Order.findByPk(id, {
+                include: [
+                    {
+                        model: Product,
+                        through: { attributes: ['quantity'] }
+                    }
+                ]
+            });
+
             if (!order) {
                 return res.status(404).json({ message: "Pedido não encontrado" });
             };
-            
-            // Deleta o pedido
-            await Order.destroy();
-    
-            res.json({ message: "Pedido deletado com sucesso" });
+
+            // Restaurar estoque dos produtos
+            for (const product of order.products) {
+                const orderedQty = product.order_products?.quantity;
+
+                if (typeof orderedQty !== 'number') {
+                    return res.status(500).json({ message: `Erro ao acessar quantidade do produto '${product.name}'` });
+                };
+
+                product.quantity += orderedQty;
+                await product.save();
+            };
+
+            // Deletar itens do pedido e depois o pedido
+            await OrderProduct.destroy({ where: { orderId: id } });
+            await Order.destroy({ where: { id } });
+
+            return res.json({ message: "Pedido deletado e estoque restaurado com sucesso" });
         } catch (error) {
-            res.status(500).json({ message: "Erro ao deletar o pedido", error: error.message });
+            return res.status(500).json({ message: "Erro ao deletar o pedido", error: error.message });
         };
     };
+
 };
 
 module.exports = OrderController;
