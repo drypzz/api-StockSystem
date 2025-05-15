@@ -37,6 +37,11 @@ class ProductController {
                 return res.status(400).json({ message: "Todos os campos sao obrigatórios" });
             };
 
+            // Verificar se o preço e a quantidade são números positivos
+            if (price < 0 || quantity < 0) {
+                return res.status(400).json({ message: "Preço e quantidade devem ser maiores que zero" });
+            };
+
             // Verificar se a categoria existe
             const findCategoryId = await Category.findOne({ where: { id: categoryId } });
             if (!findCategoryId) {
@@ -44,7 +49,7 @@ class ProductController {
             };
 
             // Cria o produto
-            const newProduct = await Product.create({ name, price, quantity, description, categoryId });
+            const newProduct = await Product.create({ name, description, price, quantity, categoryId });
 
             res.status(201).json({ message: "Produto criado com sucesso", newProduct });
         } catch (error) {

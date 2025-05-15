@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 class LoginController {
 
@@ -26,7 +27,7 @@ class LoginController {
             };
 
             // Gera o token JWT
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || "drypzz", { expiresIn: "1h" });
+            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || "drypzz", { expiresIn: "1H" });
 
             res.json({ message: "Login realizado com sucesso", token });
         } catch (error) {

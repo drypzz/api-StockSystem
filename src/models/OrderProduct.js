@@ -3,6 +3,11 @@ const Order = require("./Order");
 const Product = require("./Product");
 
 const OrderProduct = database.db.define("order_products", {
+    id: {
+        type: database.db.Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     orderId: {
         type: database.db.Sequelize.INTEGER,
         references: {

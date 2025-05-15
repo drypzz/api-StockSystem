@@ -16,6 +16,9 @@ const Product = database.db.define("product", {
     price: {
         type: database.db.Sequelize.FLOAT
     },
+    quantity: {
+        type: database.db.Sequelize.INTEGER
+    },
     categoryId: {
         type: database.db.Sequelize.INTEGER,
         references: {

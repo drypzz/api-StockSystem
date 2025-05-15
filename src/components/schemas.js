@@ -29,6 +29,7 @@ const schemas = {
       name: { type: "string", example: "Smartphone" },
       description: { type: "string", example: "Descrição do produto" },
       price: { type: "number", format: "float", example: 1299.99 },
+      quantity: { type: "integer", example: 50 },
       categoryId: { type: "integer", example: 2 },
     },
     required: ["name", "description", "price", "categoryId"],
@@ -37,6 +38,7 @@ const schemas = {
   OrderProduct: {
     type: "object",
     properties: {
+      id: { type: "integer", example: 1 },
       orderId: { type: "integer", example: 5 },
       productId: { type: "integer", example: 10 },
       quantity: { type: "integer", example: 3 },

@@ -106,7 +106,7 @@ router.get("/product/:id", productController.getByID);
  *             schema:
  *               $ref: '#/components/schemas/Product'
  *       400:
- *         description: Dados inválidos ou categoria inexistente
+ *         description: Dados inválidos, categoria inexistente, quantidade negativa ou preço negativo
  *       500:
  *         description: Erro interno do servidor
  */

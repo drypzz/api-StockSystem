@@ -113,7 +113,7 @@ class OrderController {
     
             res.json({ message: "Pedido deletado com sucesso" });
         } catch (error) {
-            res.status(500).json({ message: "Erro ao deletar usuário", error: error.message });
+            res.status(500).json({ message: "Erro ao deletar o pedido", error: error.message });
         };
     };
 };

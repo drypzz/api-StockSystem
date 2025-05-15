@@ -3,7 +3,7 @@ const Product = require("./Product");
 const User = require("./User");
 const OrderProduct = require("./OrderProduct");
 
-const OrderModel = database.db.define("order", {
+const Order = database.db.define("order", {
     id: {
         type: database.db.Sequelize.INTEGER,
         primaryKey: true,
@@ -18,7 +18,7 @@ const OrderModel = database.db.define("order", {
     },
 });
 
-OrderModel.belongsToMany(Product, { through: OrderProduct });
-Product.belongsToMany(OrderModel, { through: OrderProduct });
+Order.belongsToMany(Product, { through: OrderProduct });
+Product.belongsToMany(Order, { through: OrderProduct });
 
-module.exports = OrderModel;
+module.exports = Order;

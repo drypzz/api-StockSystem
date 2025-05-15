@@ -44,9 +44,9 @@ class CategoryController {
             };
 
             // Cria a categoria
-            const newcategory = await Category.create({ name });
+            const newCategory = await Category.create({ name });
 
-            res.status(201).json({ message: "Categoria criada com sucesso", newcategory });
+            res.status(201).json({ message: "Categoria criada com sucesso", newCategory });
         } catch (error) {
             res.status(500).json({ message: "Erro ao criar a categoria", error: error.message });
         };
