@@ -15,7 +15,7 @@ router.use(TokenController.token);
 
 /**
  * @swagger
- * /product:
+ * /api/v1/product:
  *   get:
  *     summary: Retorna todos os produtos
  *     tags: [Products]
@@ -40,7 +40,7 @@ router.get("/product", productController.getAll);
 
 /**
  * @swagger
- * /product/{id}:
+ * /api/v1/product/{id}:
  *   get:
  *     summary: Retorna um produto pelo ID
  *     tags: [Products]
@@ -69,7 +69,7 @@ router.get("/product/:id", productController.getByID);
 
 /**
  * @swagger
- * /product:
+ * /api/v1/product:
  *   post:
  *     summary: Cria um novo produto
  *     tags: [Products]
@@ -114,7 +114,7 @@ router.post("/product", productController.create);
 
 /**
  * @swagger
- * /product/{id}:
+ * /api/v1/product/{id}:
  *   put:
  *     summary: Atualiza um produto pelo ID
  *     tags: [Products]
@@ -156,7 +156,7 @@ router.put("/product/:id", productController.update);
 
 /**
  * @swagger
- * /product/{id}:
+ * /api/v1/product/{id}:
  *   delete:
  *     summary: Deleta um produto pelo ID
  *     tags: [Products]

@@ -1,7 +1,4 @@
 const Sequelize = require("sequelize");
-const database = require("../config/database");
-
-const db = database.db;
 
 // Carrega os models SEM fazer relacionamentos ainda
 const Category = require("./Category");
@@ -10,27 +7,15 @@ const User = require("./User");
 const Order = require("./Order");
 const OrderProduct = require("./OrderProduct");
 
-// Associações (executadas só depois de todos os models estarem carregados)
-Product.belongsTo(Category, { foreignKey: "categoryId" });
-Order.belongsTo(User, { foreignKey: "userId" });
-
-Order.belongsToMany(Product, {
-    through: OrderProduct,
-    foreignKey: "orderId",
-    otherKey: "productId"
+Order.belongsToMany(Product, { // Muitos para muitos
+    through: OrderProduct, // Tabela intermediária
+    foreignKey: "orderId", // Chave estrangeira na tabela OrderProduct
+    otherKey: "productId" // Chave estrangeira na tabela Product
 });
-Product.belongsToMany(Order, {
-    through: OrderProduct,
-    foreignKey: "productId",
-    otherKey: "orderId"
+Product.belongsToMany(Order, { // Muitos para muitos
+    through: OrderProduct, // Tabela intermediária
+    foreignKey: "productId", // Chave estrangeira na tabela OrderProduct
+    otherKey: "orderId" // Chave estrangeira na tabela Order
 });
 
-module.exports = {
-    db,
-    Sequelize,
-    Category,
-    Product,
-    User,
-    Order,
-    OrderProduct
-};
+module.exports = { Sequelize, Category, Product, User, Order, OrderProduct };

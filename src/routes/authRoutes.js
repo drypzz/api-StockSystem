@@ -13,7 +13,7 @@ const RegisterController = require("../middlewares/auth.register");
 
 /**
  * @swagger
- * /login:
+ * /api/v1/login:
  *   post:
  *     summary: Realiza o login do usuário
  *     tags: [Auth]
@@ -59,7 +59,7 @@ router.post("/login", LoginController.login);
 
 /**
  * @swagger
- * /register:
+ * /api/v1/register:
  *   post:
  *     summary: Cria um novo usuário
  *     tags: [Auth]

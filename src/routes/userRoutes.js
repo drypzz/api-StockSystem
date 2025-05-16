@@ -16,7 +16,7 @@ router.use(TokenController.token);
 
 /**
  * @swagger
- * /user:
+ * /api/v1/user:
  *   get:
  *     summary: Retorna todos os usuários
  *     tags: [Users]
@@ -48,7 +48,7 @@ router.get("/user", userController.getAll);
 
 /**
  * @swagger
- * /user/{id}:
+ * /api/v1/user/{id}:
  *   get:
  *     summary: Retorna um usuário pelo ID
  *     tags: [Users]
@@ -77,7 +77,7 @@ router.get("/user/:id", userController.getByID);
 
 /**
  * @swagger
- * /user:
+ * /api/v1/user:
  *   post:
  *     summary: Cria um novo usuário
  *     tags: [Users]
@@ -110,7 +110,7 @@ router.post("/user", create.register);
 
 /**
  * @swagger
- * /user/{id}:
+ * /api/v1/user/{id}:
  *   put:
  *     summary: Atualiza um usuário pelo ID
  *     tags: [Users]
@@ -150,7 +150,7 @@ router.put("/user/:id", userController.update);
 
 /**
  * @swagger
- * /user/{id}:
+ * /api/v1/user/{id}:
  *   delete:
  *     summary: Deleta um usuário pelo ID
  *     tags: [Users]

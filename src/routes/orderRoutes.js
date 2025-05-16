@@ -15,7 +15,7 @@ router.use(TokenController.token);
 
 /**
  * @swagger
- * /order:
+ * /api/v1/order:
  *   get:
  *     summary: Lista todos os pedidos
  *     tags: [Orders]
@@ -40,7 +40,7 @@ router.get("/order", orderController.getAll);
 
 /**
  * @swagger
- * /order/{id}:
+ * /api/v1/order/{id}:
  *   get:
  *     summary: Retorna um pedido pelo ID
  *     tags: [Orders]
@@ -69,7 +69,7 @@ router.get("/order/:id", orderController.getByID);
 
 /**
  * @swagger
- * /order:
+ * /api/v1/order:
  *   post:
  *     summary: Cria um novo pedido
  *     tags: [Orders]
@@ -121,7 +121,7 @@ router.post("/order", orderController.create);
 
 /**
  * @swagger
- * /order/{id}:
+ * /api/v1/order/{id}:
  *   delete:
  *     summary: Deleta um pedido pelo ID
  *     tags: [Orders]

@@ -15,7 +15,7 @@ router.use(TokenController.token);
 
 /**
  * @swagger
- * /category:
+ * /api/v1/category:
  *   get:
  *     summary: Lista todas as categorias
  *     tags: [Categories]
@@ -40,7 +40,7 @@ router.get("/category", categoryController.getAll);
 
 /**
  * @swagger
- * /category/{id}:
+ * /api/v1/category/{id}:
  *   get:
  *     summary: Retorna uma categoria pelo ID
  *     tags: [Categories]
@@ -69,7 +69,7 @@ router.get("/category/:id", categoryController.getByID);
 
 /**
  * @swagger
- * /category:
+ * /api/v1/category:
  *   post:
  *     summary: Cria uma nova categoria
  *     tags: [Categories]
@@ -108,7 +108,7 @@ router.post("/category", categoryController.create);
 
 /**
  * @swagger
- * /category/{id}:
+ * /api/v1/category/{id}:
  *   put:
  *     summary: Atualiza uma categoria pelo ID
  *     tags: [Categories]
@@ -154,7 +154,7 @@ router.put("/category/:id", categoryController.update);
 
 /**
  * @swagger
- * /category/{id}:
+ * /api/v1/category/{id}:
  *   delete:
  *     summary: Deleta uma categoria pelo ID
  *     tags: [Categories]
