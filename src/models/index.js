@@ -1,6 +1,3 @@
-const Sequelize = require("sequelize");
-
-// Carrega os models SEM fazer relacionamentos ainda
 const Category = require("./Category");
 const Product = require("./Product");
 const User = require("./User");
@@ -18,4 +15,4 @@ Product.belongsToMany(Order, { // Muitos para muitos
     otherKey: "orderId" // Chave estrangeira na tabela Order
 });
 
-module.exports = { Sequelize, Category, Product, User, Order, OrderProduct };
+module.exports = { Category, Product, User, Order, OrderProduct };
