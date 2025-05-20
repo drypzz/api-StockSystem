@@ -29,10 +29,22 @@ router.use(TokenController.token);
  *             schema:
  *               type: object
  *               properties:
+ *                 count:
+ *                   type: integer
+ *                   example: 3
  *                 orders:
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/Order'
+ *                 _links:
+ *                   type: object
+ *                   additionalProperties:
+ *                     type: object
+ *                     properties:
+ *                       href:
+ *                         type: string
+ *                       method:
+ *                         type: string
  *       500:
  *         description: Erro interno do servidor
  */
@@ -59,7 +71,19 @@ router.get("/order", orderController.getAll);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Order'
+ *               type: object
+ *               properties:
+ *                 order:
+ *                   $ref: '#/components/schemas/Order'
+ *                 _links:
+ *                   type: object
+ *                   additionalProperties:
+ *                     type: object
+ *                     properties:
+ *                       href:
+ *                         type: string
+ *                       method:
+ *                         type: string
  *       404:
  *         description: Pedido não encontrado
  *       500:
@@ -112,6 +136,15 @@ router.get("/order/:id", orderController.getByID);
  *                   example: Pedido criado com sucesso
  *                 order:
  *                   $ref: '#/components/schemas/Order'
+ *                 _links:
+ *                   type: object
+ *                   additionalProperties:
+ *                     type: object
+ *                     properties:
+ *                       href:
+ *                         type: string
+ *                       method:
+ *                         type: string
  *       400:
  *         description: Dados inválidos, usuário ou produtos não encontrados, ou estoque insuficiente
  *       500:
@@ -137,6 +170,23 @@ router.post("/order", orderController.create);
  *     responses:
  *       200:
  *         description: Pedido deletado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Pedido deletado com sucesso
+ *                 _links:
+ *                   type: object
+ *                   additionalProperties:
+ *                     type: object
+ *                     properties:
+ *                       href:
+ *                         type: string
+ *                       method:
+ *                         type: string
  *       404:
  *         description: Pedido não encontrado
  *       500:

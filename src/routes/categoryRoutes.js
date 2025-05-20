@@ -29,7 +29,10 @@ router.use(TokenController.token);
  *             schema:
  *               type: object
  *               properties:
- *                 categorys:
+ *                 count:
+ *                   type: integer
+ *                   example: 5
+ *                 categories:
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/Category'
@@ -59,7 +62,10 @@ router.get("/category", categoryController.getAll);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Category'
+ *               type: object
+ *               properties:
+ *                 category:
+ *                   $ref: '#/components/schemas/Category'
  *       404:
  *         description: Categoria não encontrada
  *       500:
@@ -97,7 +103,8 @@ router.get("/category/:id", categoryController.getByID);
  *               properties:
  *                 message:
  *                   type: string
- *                 newcategory:
+ *                   example: Categoria criada com sucesso
+ *                 category:
  *                   $ref: '#/components/schemas/Category'
  *       400:
  *         description: Campo obrigatório ausente ou categoria já registrada
@@ -141,6 +148,7 @@ router.post("/category", categoryController.create);
  *               properties:
  *                 message:
  *                   type: string
+ *                   example: Categoria atualizada com sucesso
  *                 category:
  *                   $ref: '#/components/schemas/Category'
  *       400:
@@ -170,6 +178,14 @@ router.put("/category/:id", categoryController.update);
  *     responses:
  *       200:
  *         description: Categoria deletada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Categoria deletada com sucesso
  *       400:
  *         description: Existem produtos vinculados a essa categoria
  *       404:

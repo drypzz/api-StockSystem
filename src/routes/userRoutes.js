@@ -30,17 +30,24 @@ router.use(TokenController.token);
  *             schema:
  *               type: object
  *               properties:
+ *                 count:
+ *                   type: integer
+ *                   example: 2
  *                 users:
  *                   type: array
  *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *                 _links:
+ *                   type: object
+ *                   additionalProperties:
  *                     type: object
  *                     properties:
- *                       id:
- *                         type: integer
- *                       name:
+ *                       href:
  *                         type: string
- *                       email:
+ *                         example: "/api/v1/user"
+ *                       method:
  *                         type: string
+ *                         example: "GET"
  *       500:
  *         description: Erro interno do servidor
  */
@@ -103,6 +110,16 @@ router.get("/user/:id", userController.getByID);
  *     responses:
  *       201:
  *         description: Usuário criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Usuário criado com sucesso"
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
  *       400:
  *         description: Dados inválidos
  */
@@ -139,6 +156,16 @@ router.post("/user", create.register);
  *     responses:
  *       200:
  *         description: Usuário atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Usuário atualizado com sucesso"
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
  *       400:
  *         description: Email já cadastrado
  *       404:
@@ -166,6 +193,25 @@ router.put("/user/:id", userController.update);
  *     responses:
  *       200:
  *         description: Usuário deletado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Usuário deletado com sucesso"
+ *                 _links:
+ *                   type: object
+ *                   additionalProperties:
+ *                     type: object
+ *                     properties:
+ *                       href:
+ *                         type: string
+ *                         example: "/api/v1/user"
+ *                       method:
+ *                         type: string
+ *                         example: "GET"
  *       403:
  *         description: Tentativa de deletar própria conta
  *       404:

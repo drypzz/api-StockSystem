@@ -1,13 +1,28 @@
 const { Order, User } = require("../models");
+const { generateLinks } = require("../utils/hateoas");
 
 class UserController {
 
     static async getAll(req, res) {
         try {
-            const users = await User.findAll(); // Lista todos os usuarios
-            res.status(200).json({users});
+            const users = await User.findAll();
+            
+            const sanitizedUsers = users.map(e => ({
+                id: e.id,
+                name: e.name,
+                email: e.email,
+                createdAt: e.createdAt,
+                updatedAt: e.updatedAt,
+                _links: generateLinks("user", e.id, ["GET", "PUT", "DELETE"])
+            }));
+
+            res.status(200).json({
+                count: sanitizedUsers.length,
+                users: sanitizedUsers,
+                _links: generateLinks("user", null, ["GET", "POST"])
+            });
         } catch (error) {
-            res.status(500).json({ message: "Erro ao listar usuarios", error: error.message });
+            res.status(500).json({ message: "Erro ao listar usuários", error: error.message });
         };
     };
 
@@ -21,7 +36,16 @@ class UserController {
                 return res.status(404).json({ message: "Usuario não encontrado" });
             };
 
-            res.json(user);
+            const { name, email, createdAt, updatedAt } = user;
+
+            res.status(200).json({
+                id,
+                name,
+                email,
+                createdAt,
+                updatedAt,
+                _links: generateLinks("user", id, ["GET", "PUT", "DELETE"])
+            });
         } catch (error) {
             res.status(500).json({ message: "Erro ao encontrar o usuario", error: error.message });
         };
@@ -57,7 +81,17 @@ class UserController {
             // Salva as alterações
             await user.save();
     
-            return res.status(200).json({ message: "Usuário atualizado com sucesso", user });
+            return res.status(200).json({
+                message: "Usuário atualizado com sucesso",
+                user: {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    createdAt: user.createdAt,
+                    updatedAt: user.updatedAt,
+                    _links: generateLinks("user", user.id, ["GET", "PUT", "DELETE"])
+                }
+            });
         } catch (error) {
             return res.status(500).json({ message: "Erro ao atualizar usuário", error: error.message });
         };
@@ -88,8 +122,11 @@ class UserController {
             
             // Deleta o usuario
             await user.destroy();
-    
-            res.json({ message: `Usuário deletado com sucesso${order.length > 0 ? ` junto com os seus ${order.length} pedidos atribuidos` : ""}`});
+
+            return res.status(200).json({
+                message: `Usuário deletado com sucesso${order.length > 0 ? ` junto com os seus ${order.length} pedidos atribuídos` : ""}`,
+                _links: generateLinks("user", null, ["GET", "POST"])
+            }); 
         } catch (error) {
             res.status(500).json({ message: "Erro ao deletar usuário", error: error.message });
         };

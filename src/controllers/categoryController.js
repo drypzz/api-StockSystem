@@ -1,11 +1,22 @@
 const { Category, Product } = require("../models");
+const { generateLinks } = require("../utils/hateoas");
 
 class CategoryController {
     
     static async getAll(req, res) {
         try {
-            const categorys = await Category.findAll(); // Lista todas as categorias
-            res.status(200).json({categorys});
+            const category = await Category.findAll();
+
+            const response = category.map(category => ({
+                ...category.toJSON(),
+                _links: generateLinks("category", category.id, ["GET", "PUT", "DELETE"])
+            }));
+
+            res.status(200).json({
+                count: response.length,
+                category: response,
+                _links: generateLinks("category", null, ["GET", "POST"])
+            });
         } catch (error) {
             res.status(500).json({ message: "Erro ao listar categorias", error: error.message });
         };
@@ -21,7 +32,10 @@ class CategoryController {
                 return res.status(404).json({ message: "Categoria não encontrada" });
             };
 
-            res.json(category);
+            res.status(200).json({
+                ...category.toJSON(),
+                _links: generateLinks("category", category.id, ["GET", "PUT", "DELETE"])
+            });
         } catch (error) {
             res.status(500).json({ message: "Erro ao encontrar a categoria", error: error.message });
         };
@@ -45,7 +59,13 @@ class CategoryController {
             // Cria a categoria
             const newCategory = await Category.create({ name });
 
-            res.status(201).json({ message: "Categoria criada com sucesso", newCategory });
+            return res.status(201).json({
+                message: "Categoria criada com sucesso",
+                category: {
+                    ...newCategory.toJSON(),
+                    _links: generateLinks("category", newCategory.id, ["GET", "PUT", "DELETE"])
+                }
+            });
         } catch (error) {
             res.status(500).json({ message: "Erro ao criar a categoria", error: error.message });
         };
@@ -74,7 +94,13 @@ class CategoryController {
             // Salva a categoria atualizada
             await category.save();
 
-            return res.status(200).json({ message: "Categoria atualizada com sucesso", category });
+            return res.status(200).json({
+                message: "Categoria atualizada com sucesso",
+                category: {
+                    ...category.toJSON(),
+                    _links: generateLinks("category", category.id, ["GET", "PUT", "DELETE"])
+                }
+            });
         } catch (error) {
             return res.status(500).json({ message: "Erro ao atualizar a categoria", error: error.message });
         };
@@ -102,7 +128,10 @@ class CategoryController {
             // Deleta a categoria
             await Category.destroy();
 
-            res.json({ message: "Categoria deletada com sucesso" });
+            return res.json({
+                message: "Categoria deletada com sucesso",
+                _links: generateLinks("category", null, ["GET", "POST"])
+            });
         } catch (error) {
             res.status(500).json({ message: "Erro ao deletar a categoria", error: error.message });
         };

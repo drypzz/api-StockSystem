@@ -1,11 +1,22 @@
 const { Product, Category } = require("../models");
+const { generateLinks } = require("../utils/hateoas");
 
 class ProductController {
     
     static async getAll(req, res) {
         try {
-            const products = await Product.findAll(); // Lista todos os produtos
-            res.status(200).json({products});
+            const product = await Product.findAll();
+
+            const response = product.map(product => ({
+                ...product.toJSON(),
+                _links: generateLinks("product", product.id, ["GET", "PUT", "DELETE"])
+            }));
+
+            res.status(200).json({
+                count: response.length,
+                product: response,
+                _links: generateLinks("product", null, ["GET", "POST"])
+            });
         } catch (error) {
             res.status(500).json({ message: "Erro ao listar produtos", error: error.message });
         };
@@ -21,7 +32,10 @@ class ProductController {
                 return res.status(404).json({ message: "Produto não encontrado" });
             };
 
-            res.json(product);
+            res.status(200).json({
+                ...product.toJSON(),
+                _links: generateLinks("product", product.id, ["GET", "PUT", "DELETE"])
+            });
         } catch (error) {
             res.status(500).json({ message: "Erro ao encontrar o produto", error: error.message });
         };
@@ -50,7 +64,13 @@ class ProductController {
             // Cria o produto
             const newProduct = await Product.create({ name, description, price, quantity, categoryId });
 
-            res.status(201).json({ message: "Produto criado com sucesso", newProduct });
+            return res.status(201).json({
+                message: "Produto criado com sucesso",
+                newProduct: {
+                    ...newProduct.toJSON(),
+                    _links: generateLinks("product", newProduct.id, ["GET", "PUT", "DELETE"])
+                }
+            });
         } catch (error) {
             res.status(500).json({ message: "Erro ao criar o produto", error: error.message });
         };
@@ -85,7 +105,13 @@ class ProductController {
             // Salva as alterações
             await product.save();
     
-            return res.status(200).json({ message: "Produto atualizado com sucesso", product });
+            return res.status(200).json({
+                message: "Produto atualizado com sucesso",
+                product: {
+                    ...product.toJSON(),
+                    _links: generateLinks("product", product.id, ["GET", "PUT", "DELETE"])
+                }
+            });
         } catch (error) {
             return res.status(500).json({ message: "Erro ao atualizar produto", error: error.message });
         };
@@ -104,7 +130,10 @@ class ProductController {
             // Deleta o produto
             await Product.destroy();
     
-            res.json({ message: "Produto deletado com sucesso" });
+            return res.json({
+                message: "Produto deletado com sucesso",
+                _links: generateLinks("product", null, ["GET", "POST"])
+            });
         } catch (error) {
             res.status(500).json({ message: "Erro ao deletar produto", error: error.message });
         };

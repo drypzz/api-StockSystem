@@ -29,10 +29,24 @@ router.use(TokenController.token);
  *             schema:
  *               type: object
  *               properties:
+ *                 count:
+ *                   type: integer
+ *                   example: 5
  *                 products:
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/Product'
+ *                 _links:
+ *                   type: object
+ *                   additionalProperties:
+ *                     type: object
+ *                     properties:
+ *                       href:
+ *                         type: string
+ *                         example: "/api/v1/product"
+ *                       method:
+ *                         type: string
+ *                         example: "GET"
  *       500:
  *         description: Erro interno do servidor
  */
@@ -59,7 +73,19 @@ router.get("/product", productController.getAll);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Product'
+ *               type: object
+ *               properties:
+ *                 product:
+ *                   $ref: '#/components/schemas/Product'
+ *                 _links:
+ *                   type: object
+ *                   additionalProperties:
+ *                     type: object
+ *                     properties:
+ *                       href:
+ *                         type: string
+ *                       method:
+ *                         type: string
  *       404:
  *         description: Produto não encontrado
  *       500:
@@ -104,7 +130,22 @@ router.get("/product/:id", productController.getByID);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Product'
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Produto criado com sucesso"
+ *                 product:
+ *                   $ref: '#/components/schemas/Product'
+ *                 _links:
+ *                   type: object
+ *                   additionalProperties:
+ *                     type: object
+ *                     properties:
+ *                       href:
+ *                         type: string
+ *                       method:
+ *                         type: string
  *       400:
  *         description: Dados inválidos, categoria inexistente, quantidade negativa ou preço negativo
  *       500:
@@ -140,11 +181,32 @@ router.post("/product", productController.create);
  *                 type: number
  *               quantity:
  *                 type: integer
+ *               description:
+ *                 type: string
  *               categoryId:
  *                 type: integer
  *     responses:
  *       200:
  *         description: Produto atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Produto atualizado com sucesso"
+ *                 product:
+ *                   $ref: '#/components/schemas/Product'
+ *                 _links:
+ *                   type: object
+ *                   additionalProperties:
+ *                     type: object
+ *                     properties:
+ *                       href:
+ *                         type: string
+ *                       method:
+ *                         type: string
  *       400:
  *         description: Categoria não encontrada
  *       404:
@@ -172,6 +234,23 @@ router.put("/product/:id", productController.update);
  *     responses:
  *       200:
  *         description: Produto deletado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Produto deletado com sucesso"
+ *                 _links:
+ *                   type: object
+ *                   additionalProperties:
+ *                     type: object
+ *                     properties:
+ *                       href:
+ *                         type: string
+ *                       method:
+ *                         type: string
  *       404:
  *         description: Produto não encontrado
  *       500:

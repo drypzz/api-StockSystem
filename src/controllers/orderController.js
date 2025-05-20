@@ -1,11 +1,22 @@
 const { Order, Product, OrderProduct, User } = require("../models");
+const { generateLinks } = require("../utils/hateoas");
 
 class OrderController {
     
     static async getAll(req, res) {
         try {
-            const orders = await Order.findAll(); // Listar todos os pedidos
-            res.status(200).json({orders});
+            const order = await Order.findAll();
+
+            const response = order.map(order => ({
+                ...order.toJSON(),
+                _links: generateLinks("order", order.id, ["GET", "DELETE"])
+            }));
+
+            res.status(200).json({
+                count: response.length,
+                order: response,
+                _links: generateLinks("order", null, ["GET", "POST"])
+            });
         } catch (error) {
             res.status(500).json({ message: "Erro ao listar pedidos", error: error.message });
         };
@@ -14,14 +25,31 @@ class OrderController {
     static async getByID(req, res) {
         try {
             const id = Number(req.params.id);
+            const userId = req.userId;
             
             // Verificar se o pedido existe
-            const order = await Order.findByPk(id);
+            const order = await Order.findByPk(id, {
+                include: {
+                    model: Product,
+                    through: { attributes: ['quantity'] }
+                }
+            });
             if (!order) {
                 return res.status(404).json({ message: "Pedido não encontrado" });
             };
 
-            res.json(order);
+            if (!userId) {
+                return res.status(400).json({ message: "ID do usuário ausente" });
+            };
+
+            if (order.userId !== userId) {
+                return res.status(403).json({ message: "Você não tem permissão para vizualizar este pedido" });
+            };
+
+            res.status(200).json({
+                ...order.toJSON(),
+                _links: generateLinks("order", order.id, ["GET", "DELETE"])
+            });
         } catch (error) {
             res.status(500).json({ message: "Erro ao encontrar o pedido", error: error.message });
         };
@@ -29,11 +57,16 @@ class OrderController {
 
     static async create(req, res) {
         try {
-            const { userId, items } = req.body;
+            const { items } = req.body;
+            const userId = req.userId;
 
             // Verificar se os campos obrigatórios estão presentes
-            if (!userId || !Array.isArray(items) || items.length === 0) {
+            if (!Array.isArray(items) || items.length === 0) {
                 return res.status(400).json({ message: "Campos obrigatórios ausentes ou inválidos" });
+            };
+
+            if (!userId) {
+                return res.status(400).json({ message: "ID do usuário ausente" });
             };
 
             // Verificar se o usuário existe
@@ -88,7 +121,13 @@ class OrderController {
                 }
             });
 
-            return res.status(201).json({ message: "Pedido criado com sucesso", order: orderWithItems });
+            return res.status(201).json({
+                message: "Pedido criado com sucesso",
+                order: {
+                    ...orderWithItems.toJSON(),
+                    _links: generateLinks("order", order.id, ["GET", "DELETE"])
+                }
+            });
         } catch (error) {
             return res.status(500).json({ message: "Erro ao criar o pedido", error: error.message });
         };
@@ -113,6 +152,10 @@ class OrderController {
                 return res.status(404).json({ message: "Pedido não encontrado" });
             };
 
+            if (order.userId !== req.userId) {
+                return res.status(403).json({ message: "Você não tem permissão para cancelar este pedido" });
+            };
+
             // Restaurar estoque dos produtos
             for (const product of order.products) {
                 const orderedQty = product.order_products?.quantity;
@@ -129,9 +172,12 @@ class OrderController {
             await OrderProduct.destroy({ where: { orderId: id } });
             await Order.destroy({ where: { id } });
 
-            return res.json({ message: "Pedido deletado e estoque restaurado com sucesso" });
+            return res.json({
+                message: "Pedido cancelado e estoque restaurado com sucesso",
+                _links: generateLinks("order", null, ["GET", "POST"])
+            });
         } catch (error) {
-            return res.status(500).json({ message: "Erro ao deletar o pedido", error: error.message });
+            return res.status(500).json({ message: "Erro ao cancelar o pedido", error: error.message });
         };
     };
 

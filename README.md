@@ -22,12 +22,13 @@ Desenvolvida com Node.js, Express, Sequelize ORM e MySQL.
 
 ```bash
 src/
+├── components/          # Esquemas reutilizáveis do Swagger
 ├── config/              # Configurações do Sequelize, banco e Swagger
 ├── controllers/         # Lógica de negócios das rotas
 ├── middlewares/         # Validações, autenticação, etc.
 ├── models/              # Modelos Sequelize
 ├── routes/              # Endpoints da API organizados por domínio
-├── components/          # Esquemas reutilizáveis do Swagger
+├── utils/               # Funções utilitárias e helpers reutilizáveis (ex: formatação, validações, cálculos)
 ├── server.js            # Ponto de entrada da aplicação
 ├── .env                 # Variáveis de ambiente
 └── README.md            # Este arquivo
