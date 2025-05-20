@@ -40,5 +40,5 @@ database.db.sync({ force: false })
     })
 })
 .catch((error) => {
-    console.error("Error ao conectar o banco de dados", error);
+    console.error("Error ao conectar o banco de dados: ", error);
 });
