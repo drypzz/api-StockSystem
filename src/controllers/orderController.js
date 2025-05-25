@@ -34,6 +34,7 @@ class OrderController {
                     through: { attributes: ['quantity'] }
                 }
             });
+
             if (!order) {
                 return res.status(404).json({ message: "Pedido não encontrado" });
             };
@@ -52,6 +53,37 @@ class OrderController {
             });
         } catch (error) {
             res.status(500).json({ message: "Erro ao encontrar o pedido", error: error.message });
+        };
+    };
+
+    static async getByUser(req, res) {
+        try {
+            const userId = req.userId;
+
+            if (!userId) {
+                return res.status(400).json({ message: "ID do usuário ausente" });
+            };
+
+            const order = await Order.findAll({
+                where: { userId },
+                include: {
+                    model: Product,
+                    through: { attributes: ['quantity'] }
+                }
+            });
+
+            const response = order.map(order => ({
+                ...order.toJSON(),
+                _links: generateLinks("order", order.id, ["GET", "DELETE"])
+            }));
+
+            return res.status(200).json({
+                count: response.length,
+                order: response,
+                _links: generateLinks("order", null, ["GET", "POST"])
+            });
+        } catch (error) {
+            return res.status(500).json({ message: "Erro ao buscar pedidos do usuário", error: error.message });
         };
     };
 
