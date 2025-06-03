@@ -270,11 +270,8 @@ router.get("/order/:id", orderController.getByID);
  *           schema:
  *             type: object
  *             required:
- *               - userId
  *               - items
  *             properties:
- *               userId:
- *                 type: integer
  *               items:
  *                 type: array
  *                 items:

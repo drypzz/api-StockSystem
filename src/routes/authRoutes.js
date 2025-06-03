@@ -29,10 +29,10 @@ const RegisterController = require("../middlewares/auth.register");
  *             properties:
  *               email:
  *                 type: string
- *                 example: usuario@exemplo.com
+ *                 example: joao@email.com
  *               password:
  *                 type: string
- *                 example: senha123
+ *                 example: 123123
  *     responses:
  *       200:
  *         description: Login realizado com sucesso
@@ -82,7 +82,7 @@ router.post("/login", LoginController.login);
  *                 example: joao@email.com
  *               password:
  *                 type: string
- *                 example: senha123
+ *                 example: 123123
  *     responses:
  *       201:
  *         description: Usuário criado com sucesso

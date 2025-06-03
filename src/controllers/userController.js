@@ -1,5 +1,6 @@
 const { Order, User } = require("../models");
 const { generateLinks } = require("../utils/hateoas");
+const bcrypt = require("bcrypt")
 
 class UserController {
 

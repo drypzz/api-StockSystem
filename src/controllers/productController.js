@@ -128,7 +128,7 @@ class ProductController {
             };
             
             // Deleta o produto
-            await Product.destroy();
+            await product.destroy();
     
             return res.json({
                 message: "Produto deletado com sucesso",
