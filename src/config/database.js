@@ -1,5 +1,4 @@
 const Sequelize = require("sequelize");
-const { logger } = require("sequelize/lib/utils/logger");
 require("dotenv").config();
 
 class Database {
@@ -13,7 +12,7 @@ class Database {
             (process.env.DATABASE_NAME || "database"),
             (process.env.DATABASE_USER || "root"),
             (process.env.DATABASE_PASSWORD || ""),
-            { host: (process.env.DATABASE_HOST || "localhost"), logging: true, dialect: (process.env.DATABASE_ENGINE || "mysql") },
+            { host: (process.env.DATABASE_HOST || "localhost"), logging: false, dialect: (process.env.DATABASE_ENGINE || "mysql") },
         );
     };
 };

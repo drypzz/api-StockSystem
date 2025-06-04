@@ -1,10 +1,10 @@
 const { Category, Product } = require("../models");
 const { generateLinks } = require("../utils/hateoas");
 
-const NotFound = require("../erros/not-found");
-const MissingValues = require("../erros/missing-values");
-const Unauthorized = require("../erros/unauthorized");
-const Conflict = require("../erros/conflict");
+const NotFound = require("../errors/not-found");
+const MissingValues = require("../errors/missing-values");
+const Unauthorized = require("../errors/unauthorized");
+const Conflict = require("../errors/conflict");
 
 class CategoryController {
     
@@ -18,7 +18,7 @@ class CategoryController {
 
         res.status(200).json({
             count: response.length,
-            category: response,
+            categories: response,
             _links: generateLinks("category", null, ["GET", "POST"])
         });
     };
@@ -58,7 +58,7 @@ class CategoryController {
 
             return res.status(201).json({
                 message: "Categoria criada com sucesso",
-                category: {
+                newCategory: {
                     ...newCategory.toJSON(),
                     _links: generateLinks("category", newCategory.id, ["GET", "PUT", "DELETE"])
                 }

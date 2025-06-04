@@ -3,13 +3,12 @@ require("dotenv").config();
 
 const User = require('../models/User'); // 1. IMPORTE SEU MODELO USER AQUI (ajuste o caminho se necessário)
 
-const Unauthorized = require("../erros/unauthorized");
+const Unauthorized = require("../errors/unauthorized");
 
 class TokenController {
     
-    // 2. TRANSFORME O MÉTODO EM ASYNC PARA USAR AWAIT
     static async token(req, res, next) {
-        const authHeader = req.headers.authorization; // Renomeei para authHeader para clareza
+        const authHeader = req.headers.authorization;
         
         // Verifica se o cabeçalho de autorização existe
         if (!authHeader) {
@@ -29,6 +28,7 @@ class TokenController {
             
             const user = await User.findByPk(decoded.id);
 
+            // Verifica se o usuario existe no banco
             if (!user) {
                 throw new Unauthorized("Token inválido ou usuário não existe mais.")
             }
@@ -38,14 +38,14 @@ class TokenController {
             next();
         } catch (error) {
             if (error.name === 'TokenExpiredError') {
-                return res.status(401).json({ message: "Token expirado!", error: error.message });
+                throw new Unauthorized("Token expirado.")
             }
             if (error.name === 'JsonWebTokenError') {
-                return res.status(403).json({ message: "Token inválido!", error: error.message });
+                throw new Unauthorized("Token inválido.")
             }
             res.status(500).json({ message: "Erro interno ao verificar o token.", error: error.message });
         }
     }
-}
+};
 
 module.exports = TokenController;

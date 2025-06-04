@@ -2,9 +2,9 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const Unauthorized = require("../erros/unauthorized");
-const MissingValues = require("../erros/missing-values");
-const NotFound = require("../erros/not-found");
+const Unauthorized = require("../errors/unauthorized");
+const MissingValues = require("../errors/missing-values");
+const NotFound = require("../errors/not-found");
 
 require("dotenv").config();
 

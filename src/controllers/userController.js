@@ -1,16 +1,16 @@
 const { Order, User } = require("../models");
 const { generateLinks } = require("../utils/hateoas");
-
-const NotFound = require("../erros/not-found");
 const bcrypt = require("bcrypt");
-const Conflict = require("../erros/conflict");
+
+const NotFound = require("../errors/not-found");
+const Conflict = require("../errors/conflict");
 
 class UserController {
 
     static async getAll(req, res) {
         const users = await User.findAll();
         
-        const sanitizedUsers = users.map(e => ({
+        const response = users.map(e => ({
             id: e.id,
             name: e.name,
             email: e.email,
@@ -20,8 +20,8 @@ class UserController {
         }));
 
         res.status(200).json({
-            count: sanitizedUsers.length,
-            users: sanitizedUsers,
+            count: response.length,
+            users: response,
             _links: generateLinks("user", null, ["GET", "POST"])
         });
     };

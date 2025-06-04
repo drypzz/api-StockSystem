@@ -1,9 +1,9 @@
 const { Product, Category } = require("../models");
 const { generateLinks } = require("../utils/hateoas");
 
-const NotFound = require("../erros/not-found");
-const MissingValues = require("../erros/missing-values");
-const Unauthorized = require("../erros/unauthorized");
+const NotFound = require("../errors/not-found");
+const MissingValues = require("../errors/missing-values");
+const Unauthorized = require("../errors/unauthorized");
 
 class ProductController {
     
@@ -17,7 +17,7 @@ class ProductController {
 
         res.status(200).json({
             count: response.length,
-            product: response,
+            products: response,
             _links: generateLinks("product", null, ["GET", "POST"])
         });
     };

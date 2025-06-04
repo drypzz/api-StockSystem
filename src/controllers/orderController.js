@@ -1,9 +1,9 @@
 const { Order, Product, OrderProduct, User } = require("../models");
 const { generateLinks } = require("../utils/hateoas");
 
-const NotFound = require("../erros/not-found");
-const MissingValues = require("../erros/missing-values");
-const Unauthorized = require("../erros/unauthorized");
+const NotFound = require("../errors/not-found");
+const MissingValues = require("../errors/missing-values");
+const Unauthorized = require("../errors/unauthorized");
 
 class OrderController {
     
@@ -17,7 +17,7 @@ class OrderController {
 
         res.status(200).json({
             count: response.length,
-            order: response,
+            orders: response,
             _links: generateLinks("order", null, ["GET", "POST"])
         });
     };

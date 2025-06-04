@@ -1,9 +1,9 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 
-const MissingValues = require("../erros/missing-values");
-const Conflict = require("../erros/conflict");
-const EmailValidade = require("../erros/email-validate");
+const MissingValues = require("../errors/missing-values");
+const Conflict = require("../errors/conflict");
+const EmailValidade = require("../errors/email-validate");
 
 class RegisterController {
 
