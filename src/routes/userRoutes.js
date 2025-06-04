@@ -2,10 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const userController = require("../controllers/userController");
-const TokenController = require("../middlewares/auth.token");
 const create = require("../middlewares/auth.register");
 
-router.use(TokenController.token);
 
 /**
  * @swagger

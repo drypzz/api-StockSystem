@@ -1,8 +1,6 @@
 const express = require('express');
-require('dotenv').config();
-
 const app = express();
-app.use(express.json());
+require('dotenv').config();
 
 // Importa o Swagger
 const { swaggerUi, swaggerSpec } = require('./src/config/swagger');
@@ -19,6 +17,9 @@ const userRoutes = require("./src/routes/userRoutes");
 const orderRoutes = require("./src/routes/orderRoutes");
 const categoryRoutes = require("./src/routes/categoryRoutes");
 const productRoutes = require("./src/routes/productRoutes");
+const TokenController = require("./src/middlewares/auth.token");
+
+app.use(express.json());
 
 // Rota da documentação
 app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -26,11 +27,28 @@ app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Rotas de autenticação
 app.use("/api/v1", authRoutes);
 
+// Rota default
+app.get("/", (req, res) => {
+    res.send("Connected...")
+})
+
 // Rotas principais
+app.use(TokenController.token);
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", orderRoutes);
 app.use("/api/v1", categoryRoutes);
 app.use("/api/v1", productRoutes);
+
+// Tratação de erros
+app.use((err, req, res, next) => {
+    if (err.statusCode) {
+        return res.status(err.statusCode).json({ message: err.message });
+    }
+
+    console.error(err);
+    
+    res.status(500).json({ message: 'Erro interno do servidor' });
+});
 
 // Inicializa o banco de dados e força a sincronização
 database.db.sync({ force: false })

@@ -2,9 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const orderController = require("../controllers/orderController");
-const TokenController = require("../middlewares/auth.token");
-
-router.use(TokenController.token);
 
 /**
  * @swagger
