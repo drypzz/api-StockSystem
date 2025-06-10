@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 require('dotenv').config();
 
 // Importa o Swagger
@@ -19,6 +20,7 @@ const categoryRoutes = require("./src/routes/categoryRoutes");
 const productRoutes = require("./src/routes/productRoutes");
 const TokenController = require("./src/middlewares/auth.token");
 
+app.use(cors());
 app.use(express.json());
 
 // Rota da documentação
