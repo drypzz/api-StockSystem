@@ -65,7 +65,7 @@ class ProductController {
 
     static async update(req, res) {
         const id = Number(req.params.id);
-        const { name, price, quantity, categoryId } = req.body;
+        const { name, price, description, quantity, categoryId } = req.body;
 
         const product = await Product.findByPk(id);
         if (!product) {
@@ -83,6 +83,7 @@ class ProductController {
         if (name) product.name = name;
         if (price !== undefined) product.price = price;
         if (quantity !== undefined) product.quantity = quantity;
+        if (description) product.description = description;
 
         if (categoryId && categoryId !== product.categoryId) {
             const category = await Category.findByPk(categoryId);
