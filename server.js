@@ -34,6 +34,11 @@ app.get("/", (req, res) => {
     res.send("Connected...")
 })
 
+// Validação de token (Front-End)
+app.get("/api/v1/auth/validate", TokenController.token, (req, res) => {
+    res.status(200).json({ message: 'Token is valid.' });
+})
+
 // Rotas principais
 app.use(TokenController.token);
 app.use("/api/v1", userRoutes);
