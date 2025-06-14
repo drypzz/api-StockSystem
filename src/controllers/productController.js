@@ -25,6 +25,10 @@ class ProductController {
     static async getByID(req, res) {
         const id = Number(req.params.id);
 
+        if (isNaN(id)){
+            throw new Unauthorized("ID invalido")
+        };
+
         const product = await Product.findByPk(id);
         if (!product) {
             throw new NotFound("Produto não encontrado");

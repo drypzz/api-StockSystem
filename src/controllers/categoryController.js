@@ -26,6 +26,10 @@ class CategoryController {
         const id = Number(req.params.id);
         const category = await Category.findByPk(id);
 
+        if (isNaN(id)){
+            throw new Unauthorized("ID invalido")
+        };
+
         if (!category) {
             throw new NotFound("Categoria não encontrada");
         }

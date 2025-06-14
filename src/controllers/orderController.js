@@ -25,6 +25,10 @@ class OrderController {
     static async getByID(req, res) {
         const id = Number(req.params.id);
         const userId = req.userId;
+
+        if (isNaN(id)){
+            throw new Unauthorized("ID invalido")
+        };
         
         // Verificar se o pedido existe
         const order = await Order.findByPk(id, {

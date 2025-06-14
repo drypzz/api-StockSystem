@@ -31,6 +31,10 @@ class UserController {
         const id = Number(req.params.id);
         const user = await User.findByPk(id);
 
+        if (isNaN(id)){
+            throw new Unauthorized("ID invalido")
+        };
+
         if (!user) {
             throw new NotFound("Usuário não encontrado");
         }
