@@ -3,6 +3,8 @@ const swaggerUi = require('swagger-ui-express');
 const schemas = require('../components/schemas');
 require('dotenv').config();
 
+const port = process.env.API_PORT || 3000;
+
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -26,7 +28,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: `http://localhost:${port}`,
         description: 'Servidor local de desenvolvimento'
       }
     ],
