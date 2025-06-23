@@ -46,7 +46,7 @@ Você pode testar via Swagger em `/api/v1/docs`.
 ## 📄 Documentação
 
 A documentação da API está disponível via Swagger em:  
-**[http://localhost:3000/api/v1/docs](http://localhost:3000/api/v1/docs)**
+**[http://localhost:3000/api/v1/docs](http://localhost:3001/api/v1/docs)**
 
 Inclui:
 
@@ -73,7 +73,7 @@ Inclui:
 
 3. Configure seu `.env`:
    ```env
-   API_PORT=3000
+   API_PORT=3001
    DB_USER=root
    DB_PASSWORD=
    DB_NAME=stocksystem
