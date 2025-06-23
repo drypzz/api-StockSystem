@@ -46,7 +46,7 @@ Você pode testar via Swagger em `/api/v1/docs`.
 ## 📄 Documentação
 
 A documentação da API está disponível via Swagger em:  
-**[http://localhost:3000/api/v1/docs](http://localhost:3001/api/v1/docs)**
+**[http://localhost:3001/api/v1/docs](http://localhost:3001/api/v1/docs)**
 
 Inclui:
 
