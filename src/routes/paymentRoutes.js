@@ -5,16 +5,8 @@ const PaymentController = require("../controllers/paymentController");
 
 const authMiddleware = require('../middlewares/auth.token');
 
-// Inicia o processo de pagamento para um pedido específico
-router.post("/order/:publicId/pay", authMiddleware.token, (req, res, next) => {
-    try {
-        PaymentController.createPayment(req, res);
-    } catch(err) {
-        next(err);
-    }
-});
+router.post("/order/:publicId/pay", authMiddleware.token, PaymentController.getOrCreatePayment);
 
-// Rota para o Webhook do Mercado Pago (não precisa de autenticação)
 router.post("/payments/webhook", (req, res, next) => {
     try {
         PaymentController.handleWebhook(req, res);

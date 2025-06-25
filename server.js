@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+require('./src/jobs/expiredOrders');
 require("dotenv").config();
 
 // Importa o Swagger
@@ -41,6 +42,7 @@ app.get("/api/v1/auth/validate", TokenController.token, (req, res) => {
     res.status(200).json({ message: "Token is valid." });
 })
 
+// Rotas de Pagamentos
 app.use("/api/v1", paymentRoutes);
 
 // Rotas principais

@@ -20,6 +20,18 @@ const Order = database.db.define("order", {
             key: "id"
         },
     },
+    paymentQrCode: {
+        type: database.db.Sequelize.TEXT,
+        allowNull: true,
+    },
+    paymentQrCodeBase64: {
+        type: database.db.Sequelize.TEXT,
+        allowNull: true,
+    },
+    paymentExpiresAt: {
+        type: database.db.Sequelize.DATE,
+        allowNull: true,
+    },
     paymentStatus: {
         type: database.db.Sequelize.STRING,
         defaultValue: 'pending', // 'pending', 'approved', 'cancelled', 'failed'
