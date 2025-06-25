@@ -1,18 +1,32 @@
+// models/index.js (ou seu arquivo central de associações)
+
 const Category = require("./Category");
 const Product = require("./Product");
 const User = require("./User");
 const Order = require("./Order");
 const OrderProduct = require("./OrderProduct");
 
-Order.belongsToMany(Product, { // Muitos para muitos
-    through: OrderProduct, // Tabela intermediária
-    foreignKey: "orderId", // Chave estrangeira na tabela OrderProduct
-    otherKey: "productId" // Chave estrangeira na tabela Product
+// User <-> Order (Um usuário tem muitos pedidos, um pedido pertence a um usuário)
+User.hasMany(Order, { foreignKey: "userId" });
+Order.belongsTo(User, { 
+    as: 'user', // CORREÇÃO: Adicione um alias explícito (ex: 'user' em minúsculo)
+    foreignKey: "userId" 
 });
-Product.belongsToMany(Order, { // Muitos para muitos
-    through: OrderProduct, // Tabela intermediária
-    foreignKey: "productId", // Chave estrangeira na tabela OrderProduct
-    otherKey: "orderId" // Chave estrangeira na tabela Order
+
+// Category <-> Product 
+Category.hasMany(Product, { foreignKey: "categoryId" });
+Product.belongsTo(Category, { as: 'category', foreignKey: "categoryId" });
+
+// Order <-> Product
+Order.belongsToMany(Product, {
+    through: OrderProduct,
+    foreignKey: "orderId",
+    as: 'products' 
 });
+Product.belongsToMany(Order, {
+    through: OrderProduct,
+    foreignKey: "productId",
+});
+
 
 module.exports = { Category, Product, User, Order, OrderProduct };

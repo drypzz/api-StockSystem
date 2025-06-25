@@ -14,6 +14,15 @@ const Order = database.db.define("order", {
             key: "id"
         },
     },
+    paymentStatus: {
+        type: database.db.Sequelize.STRING,
+        defaultValue: 'pending', // 'pending', 'approved', 'cancelled', 'failed'
+        allowNull: false,
+    },
+    paymentId: {
+        type: database.db.Sequelize.STRING, // Armazena o ID do pagamento do Mercado Pago
+        allowNull: true,
+    }
 });
 
 module.exports = Order;

@@ -1,10 +1,10 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const cors = require('cors');
-require('dotenv').config();
+const cors = require("cors");
+require("dotenv").config();
 
 // Importa o Swagger
-const { swaggerUi, swaggerSpec } = require('./src/config/swagger');
+const { swaggerUi, swaggerSpec } = require("./src/config/swagger");
 
 // Importa o banco de dados
 const database = require("./src/config/database");
@@ -18,13 +18,15 @@ const userRoutes = require("./src/routes/userRoutes");
 const orderRoutes = require("./src/routes/orderRoutes");
 const categoryRoutes = require("./src/routes/categoryRoutes");
 const productRoutes = require("./src/routes/productRoutes");
+const paymentRoutes = require("./src/routes/paymentRoutes");
+
 const TokenController = require("./src/middlewares/auth.token");
 
 app.use(cors());
 app.use(express.json());
 
 // Rota da documentação
-app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Rotas de autenticação
 app.use("/api/v1", authRoutes);
@@ -36,8 +38,10 @@ app.get("/", (req, res) => {
 
 // Validação de token (Front-End)
 app.get("/api/v1/auth/validate", TokenController.token, (req, res) => {
-    res.status(200).json({ message: 'Token is valid.' });
+    res.status(200).json({ message: "Token is valid." });
 })
+
+app.use("/api/v1", paymentRoutes);
 
 // Rotas principais
 app.use(TokenController.token);
@@ -54,7 +58,7 @@ app.use((err, req, res, next) => {
 
     console.error(err);
     
-    res.status(500).json({ message: 'Erro interno do servidor' });
+    res.status(500).json({ message: "Erro interno do servidor" });
 });
 
 // Inicializa o banco de dados e força a sincronização
