@@ -2,6 +2,7 @@ const { MercadoPagoConfig, Payment } = require('mercadopago');
 const { Order, Product, User } = require("../models");
 const NotFound = require("../errors/not-found");
 const Conflict = require("../errors/conflict");
+const Unauthorized = require("../errors/unauthorized");
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN,
@@ -60,6 +61,10 @@ class PaymentController {
       const expirationDate = new Date();
       expirationDate.setMinutes(expirationDate.getMinutes() + 10);
 
+      const nameParts = order.user.name.trim().split(' ');
+      const firstName = nameParts.shift();
+      const lastName = nameParts.length > 0 ? nameParts.join(' ') : firstName;
+
       const mercadopagoItems = order.products.map(product => ({
         id: String(product.id),
         title: product.name,
@@ -76,20 +81,16 @@ class PaymentController {
         payment_method_id: 'pix',
         statement_descriptor: "STK | E-Commerce",
         external_reference: order.publicId,
-        back_urls: {
-          success: `${process.env.FRONTEND_URL}/order/${order.publicId}`,
-          pending: `${process.env.FRONTEND_URL}/payment/${order.publicId}`,
-          failure: `${process.env.FRONTEND_URL}/orders`,
-        },
         payer: {
           email: order.user.email,
-          first_name: order.user.name,
+          first_name: firstName,
+          last_name: lastName,
+        },
+        additional_info: {
+          items: mercadopagoItems
         },
         notification_url: `${process.env.BACKEND_URL}/api/v1/payments/webhook`,
         date_of_expiration: expirationDate.toISOString(),
-        additional_info: {
-          items: mercadopagoItems
-        }
       };
 
       const idempotencyKey = `order-payment-${order.id}`;
@@ -116,30 +117,40 @@ class PaymentController {
       });
     } catch (error) {
       console.error("Erro ao criar pagamento:", error);
+      next(error);
     }
   }
 
-  static async handleWebhook(req, res) {
-    const { body, query } = req;
+  static async handleWebhook(req, res, next) {
+    try {
+      const { body, query } = req;
 
-    if (query.topic === 'payment' || query.type === 'payment') {
-      const paymentId = body.data?.id || query.id;
+      if (query.topic === 'payment' || query.type === 'payment') {
+        const paymentId = body.data?.id || query.id;
 
-      const payment = new Payment(client);
-      const paymentInfo = await payment.get({ id: paymentId });
+        if (!paymentId) {
+          return res.status(200).send('Webhook recebido, mas sem ID de pagamento.');
+        }
 
-      const order = await Order.findOne({ where: { paymentId: String(paymentId) } });
+        const payment = new Payment(client);
+        const paymentInfo = await payment.get({ id: paymentId });
 
-      if (order && paymentInfo) {
-        await order.update({ paymentStatus: paymentInfo.status });
+        const order = await Order.findOne({ where: { paymentId: String(paymentId) } });
 
-        if (paymentInfo.status === 'approved') {
-          console.log(`Pagamento do pedido ${order.id} APROVADO!`);
+        if (order && paymentInfo) {
+          await order.update({ paymentStatus: paymentInfo.status });
+
+          if (paymentInfo.status === 'approved') {
+            console.log(`Pagamento do pedido ${order.id} APROVADO!`);
+          }
         }
       }
-    }
 
-    res.status(200).send('Webhook recebido');
+      res.status(200).send('Webhook recebido');
+    } catch (error) {
+      console.error("Erro no webhook:", error);
+      next(error);
+    }
   }
 }
 
