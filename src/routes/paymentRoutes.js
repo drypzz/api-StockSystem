@@ -6,7 +6,7 @@ const PaymentController = require("../controllers/paymentController");
 const authMiddleware = require('../middlewares/auth.token');
 
 // Inicia o processo de pagamento para um pedido específico
-router.post("/order/:id/pay", authMiddleware.token, (req, res, next) => {
+router.post("/order/:publicId/pay", authMiddleware.token, (req, res, next) => {
     try {
         PaymentController.createPayment(req, res);
     } catch(err) {

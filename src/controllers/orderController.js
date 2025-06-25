@@ -4,6 +4,7 @@ const { generateLinks } = require("../utils/hateoas");
 const NotFound = require("../errors/not-found");
 const MissingValues = require("../errors/missing-values");
 const Unauthorized = require("../errors/unauthorized");
+const { where } = require("sequelize");
 
 class OrderController {
 
@@ -12,7 +13,7 @@ class OrderController {
 
         const response = order.map(order => ({
             ...order.toJSON(),
-            _links: generateLinks("order", order.id, ["GET", "DELETE"])
+            _links: generateLinks("order", order.publicId, ["GET", "DELETE"])
         }));
 
         res.status(200).json({
@@ -22,39 +23,34 @@ class OrderController {
         });
     };
 
-    static async getByID(req, res) {
-        const id = Number(req.params.id);
-        const userId = req.userId;
+    static async getByID(req, res, next) {
+        try {
+            const { publicId } = req.params;
+            const userId = req.userId;
 
-        if (isNaN(id)) {
-            throw new Unauthorized("ID invalido")
-        };
+            const order = await Order.findOne({
+                where: { publicId },
+                include: {
+                    model: Product,
+                    as: 'products',
+                    through: { attributes: ['quantity'] }
+                }
+            });
 
-        // Verificar se o pedido existe
-        const order = await Order.findByPk(id, {
-            include: {
-                model: Product,
-                as: 'products',
-                through: { attributes: ['quantity'] }
+            if (!order) {
+                throw new NotFound("Pedido não encontrado");
             }
-        });
+            if (order.userId !== userId) {
+                throw new Unauthorized("Você não tem permissão para vizualizar este pedido");
+            }
 
-        if (!order) {
-            throw new NotFound("Pedido não encontrado")
-        };
-
-        if (!userId) {
-            throw new Unauthorized("ID do usuário ausente")
-        };
-
-        if (order.userId !== userId) {
-            throw new Unauthorized("Você não tem permissão para vizualizar este pedido")
-        };
-
-        res.status(200).json({
-            ...order.toJSON(),
-            _links: generateLinks("order", order.id, ["GET", "DELETE"])
-        });
+            res.status(200).json({
+                ...order.toJSON(),
+                _links: generateLinks("order", order.publicId, ["GET", "DELETE"])
+            });
+        } catch (error) {
+            next(error);
+        }
     };
 
     static async getByUser(req, res) {
@@ -75,7 +71,7 @@ class OrderController {
 
         const response = order.map(order => ({
             ...order.toJSON(),
-            _links: generateLinks("order", order.id, ["GET", "DELETE"])
+            _links: generateLinks("order", order.publicId, ["GET", "DELETE"])
         }));
 
         return res.status(200).json({
@@ -111,7 +107,7 @@ class OrderController {
         if (foundProducts.length !== productIds.length) {
             throw new NotFound("Alguns produtos não foram encontrados");
         }
-        
+
         for (const item of items) {
             const product = foundProducts.find(p => p.id === item.productId);
             if (!product || item.quantity > product.quantity) {
@@ -142,8 +138,8 @@ class OrderController {
         });
 
         const orderLinks = [
-            ...generateLinks("order", order.id, ["GET", "DELETE"]),
-            { rel: "pay", method: "POST", href: `/api/orders/${order.id}/pay` }
+            ...generateLinks("order", order.publicId, ["GET", "DELETE"]),
+            { rel: "pay", method: "POST", href: `/api/orders/${order.publicId}/pay` }
         ];
 
         return res.status(201).json({
@@ -224,9 +220,10 @@ class OrderController {
     // }
 
     static async delete(req, res) {
-        const id = Number(req.params.id);
+        const { publicId } = req.params;
 
-        const order = await Order.findByPk(id, {
+        const order = await Order.findOne({
+            where: { publicId },
             include: {
                 model: Product,
                 as: 'products',
@@ -255,8 +252,8 @@ class OrderController {
             await product.save();
         }
 
-        await OrderProduct.destroy({ where: { orderId: id } });
-        await Order.destroy({ where: { id } });
+        await OrderProduct.destroy({ where: { orderId: order.id } });
+        await Order.destroy({ where: { id: order.id } });
 
         return res.status(200).json({
             message: "Pedido cancelado e estoque restaurado com sucesso",

@@ -2,6 +2,7 @@ const { MercadoPagoConfig, Payment } = require('mercadopago');
 const { Order, Product, User } = require("../models");
 const NotFound = require("../errors/not-found");
 const Conflict = require("../errors/conflict");
+const { where } = require('sequelize');
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN,
@@ -11,10 +12,11 @@ class PaymentController {
 
   static async createPayment(req, res, next) {
     try {
-      const orderId = Number(req.params.id);
+      const { publicId } = req.params;
       const userId = req.userId;
 
-      const order = await Order.findByPk(orderId, {
+      const order = await Order.findOne({
+        where: { publicId },
         include: [
           { model: Product, as: 'products', through: { attributes: ['quantity'] } },
           { model: User, as: 'user', attributes: ['email', 'name'] }
@@ -67,7 +69,7 @@ class PaymentController {
 
       await order.update({ paymentId: String(result.id) });
       res.status(200).json({
-        orderId: order.id,
+        publicOrderId: order.publicId,
         paymentId: result.id,
         paymentStatus: result.status,
         qrCode: result.point_of_interaction.transaction_data.qr_code,

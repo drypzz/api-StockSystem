@@ -250,7 +250,7 @@ router.get("/order/user", orderController.getByUser);
  *       500:
  *         description: Erro interno do servidor
  */
-router.get("/order/:id", orderController.getByID);
+router.get("/order/:publicId", orderController.getByID);
 
 /**
  * @swagger
@@ -350,6 +350,6 @@ router.post("/order", orderController.create);
  *       500:
  *         description: Erro interno do servidor
  */
-router.delete("/order/:id", orderController.delete);
+router.delete("/order/:publicId", orderController.delete);
 
 module.exports = router;

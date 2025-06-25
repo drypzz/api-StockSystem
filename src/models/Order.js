@@ -7,6 +7,12 @@ const Order = database.db.define("order", {
         primaryKey: true,
         autoIncrement: true
     },
+    publicId: {
+        type: database.db.Sequelize.UUID,
+        defaultValue: database.db.Sequelize.UUIDV4,
+        allowNull: false,
+        unique: true
+    },
     userId: {
         type: database.db.Sequelize.INTEGER,
         references: {
@@ -20,7 +26,7 @@ const Order = database.db.define("order", {
         allowNull: false,
     },
     paymentId: {
-        type: database.db.Sequelize.STRING, // Armazena o ID do pagamento do Mercado Pago
+        type: database.db.Sequelize.STRING,
         allowNull: true,
     }
 });
