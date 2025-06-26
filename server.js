@@ -67,9 +67,9 @@ app.use((err, req, res, next) => {
 database.db.sync({ force: false })
 .then(() => {
     app.listen(Number(port), () => {
-        console.log(`Servidor rodando em http://localhost:${port}`)
+        console.log(`\n🚀 Servidor rodando na porta ${port}`)
     })
 })
 .catch((error) => {
-    console.error("Error ao conectar o banco de dados: ", error);
+    console.error("\n❌ Error ao conectar o banco de dados: ", error);
 });
