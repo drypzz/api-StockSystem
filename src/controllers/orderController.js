@@ -45,9 +45,7 @@ class OrderController {
         throw new NotFound("Pedido não encontrado");
       }
       if (order.userId !== userId) {
-        throw new Unauthorized(
-          "Você não tem permissão para vizualizar este pedido"
-        );
+        throw new Unauthorized("Você não tem permissão para vizualizar este pedido");
       }
 
       res.status(200).json({
@@ -65,7 +63,7 @@ class OrderController {
       if (!userId) {
         throw new Unauthorized("ID do usuário ausente");
       }
-      
+
       const userOrders = await Order.findAll({
         where: { userId },
         include: [{ model: OrderProduct, as: 'order_products' }],
@@ -84,34 +82,39 @@ class OrderController {
       const productsMap = new Map(existingProducts.map(p => [p.id, p.toJSON()]));
 
       const responseOrders = userOrders.map(order => {
+        const originalItemCount = order.order_products.length;
+        
+        if (originalItemCount === 0) {
+          return {
+            ...order.toJSON(),
+            products: [],
+            isDataIntact: false
+          };
+        }
+
+        let isDataIntact = true;
         const rehydratedProducts = order.order_products.map(op => {
           const productData = productsMap.get(op.productId);
-          
           if (productData) {
-            return {
-              ...productData,
-              order_products: { quantity: op.quantity }
-            };
+            return { ...productData, order_products: { quantity: op.quantity } };
           }
+          isDataIntact = false;
           return null;
         });
 
-        const finalOrderObject = order.toJSON();
-        delete finalOrderObject.order_products;
-
         return {
-          ...finalOrderObject,
-          order_products: order.toJSON().order_products,
-          products: rehydratedProducts
+          ...order.toJSON(),
+          products: rehydratedProducts,
+          isDataIntact: isDataIntact
         };
       });
-      
+
       return res.status(200).json({
         count: responseOrders.length,
         order: responseOrders,
       });
 
-    } catch(error) {
+    } catch (error) {
       next(error);
     }
   }
@@ -146,10 +149,7 @@ class OrderController {
     for (const item of items) {
       const product = foundProducts.find((p) => p.id === item.productId);
       if (!product || item.quantity > product.quantity) {
-        throw new Conflict(
-          `Estoque insuficiente para o produto '${
-            product?.name || "desconhecido"
-          }'`
+        throw new Conflict(`Estoque insuficiente para o produto '${product?.name || "desconhecido"}'`
         );
       }
     }
@@ -208,40 +208,27 @@ class OrderController {
       }
 
       if (order.userId !== req.userId) {
-        throw new Unauthorized(
-          "Você não tem permissão para cancelar este pedido"
-        );
+        throw new Unauthorized("Você não tem permissão para cancelar este pedido");
       }
 
       if (order.paymentStatus === "approved") {
-        throw new Conflict(
-          "Não é possível cancelar um pedido que já foi pago."
-        );
+        throw new Conflict("Não é possível cancelar um pedido que já foi pago.");
       }
 
-      if (
-        order.paymentId &&
-        (order.paymentStatus === "pending" ||
-          order.paymentStatus === "in_process")
-      ) {
+      if (order.paymentId && (order.paymentStatus === "pending" || order.paymentStatus === "in_process")) {
         try {
           const payment = new Payment(client);
 
           await payment.cancel({ id: order.paymentId });
         } catch (mpError) {
-          console.error(
-            `Erro ao tentar cancelar o pagamento ${order.paymentId} no Mercado Pago. O pedido local será cancelado mesmo assim. Detalhes:`,
-            mpError
-          );
+          console.error(`Erro ao tentar cancelar o pagamento ${order.paymentId} no Mercado Pago. O pedido local será cancelado mesmo assim. Detalhes:`, mpError);
         }
       }
 
       for (const product of order.products) {
         const orderedQty = product.order_products?.quantity;
         if (typeof orderedQty !== "number") {
-          throw new Conflict(
-            `Erro ao restaurar estoque do produto '${product.name}'`
-          );
+          throw new Conflict(`Erro ao restaurar estoque do produto '${product.name}'`);
         }
         await product.increment("quantity", { by: orderedQty });
       }

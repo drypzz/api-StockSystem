@@ -70,7 +70,7 @@ class PaymentController {
       }
 
       const expirationDate = new Date();
-      expirationDate.setMinutes(expirationDate.getMinutes() + 10);
+      expirationDate.setMinutes(expirationDate.getMinutes() + 20);
 
       const nameParts = order.user.name.trim().split(" ");
       const firstName = nameParts.shift();
