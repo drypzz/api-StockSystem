@@ -7,7 +7,7 @@ const Conflict = require("../errors/conflict");
 const Unauthorized = require("../errors/unauthorized");
 
 class UserController {
-    
+
     static async getAll(req, res) {
         const users = await User.findAll();
 
@@ -31,7 +31,7 @@ class UserController {
         const id = Number(req.params.id);
         const user = await User.findByPk(id);
 
-        if (isNaN(id)){
+        if (isNaN(id)) {
             throw new Unauthorized("ID invalido")
         };
 
@@ -89,35 +89,45 @@ class UserController {
         });
     }
 
-    static async delete(req, res) {
-        const id = Number(req.params.id);
-        const tokenId = req.userId;
+    static async delete(req, res, next) {
+        try {
+            const id = Number(req.params.id);
+            const tokenId = req.userId;
 
-        const user = await User.findByPk(id);
-        if (!user) {
-            throw new NotFound(`Usuário não encontrado`);
+            if (id !== tokenId) {
+                throw new Unauthorized("Você não tem permissão para deletar esta conta.");
+            }
+
+            const user = await User.findByPk(id);
+            if (!user) {
+                throw new NotFound(`Usuário não encontrado`);
+            }
+
+            const pendingOrdersCount = await Order.count({
+                where: {
+                    userId: id,
+                    paymentStatus: 'pending'
+                }
+            });
+
+            if (pendingOrdersCount > 0) {
+                throw new Conflict(`Você não pode deletar sua conta pois possui ${pendingOrdersCount} pedido(s) pendente(s).`);
+            }
+
+            await Order.destroy({
+                where: { userId: id }
+            });
+
+            await user.destroy();
+
+            return res.status(200).json({
+                message: "Usuário deletado com sucesso.",
+                _links: generateLinks("user", null, ["GET", "POST"])
+            });
+
+        } catch (error) {
+            next(error);
         }
-
-        const hasOrders = await Order.findAll({ where: { userId: id } });
-
-        if (req.userId !== id) {
-            throw new Unauthorized("Você não pode deletar a conta de outro usuario")
-        }
-
-        if (id === tokenId && hasOrders.length > 0) {
-            throw new Conflict(`Você não pode deletar sua própria conta com pedidos ativos (${hasOrders.length}).`);
-        }
-
-        if (id !== tokenId && hasOrders.length > 0) {
-            await Order.destroy({ where: { userId: id } });
-        }
-
-        await user.destroy();
-
-        return res.status(200).json({
-            message: "Usuário deletado com sucesso",
-            _links: generateLinks("user", null, ["GET", "POST"])
-        });
     }
 }
 
