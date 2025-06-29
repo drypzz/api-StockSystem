@@ -9,13 +9,13 @@ const NotFound = require("../errors/not-found");
 const Conflict = require("../errors/conflict");
 const Unauthorized = require("../errors/unauthorized");
 
-const client = new MercadoPagoConfig({
-  accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN,
-});
 
 class PaymentController {
   static async getOrCreatePayment(req, res, next) {
     try {
+      const client = new MercadoPagoConfig({
+        accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN,
+      });
       const { publicId } = req.params;
       const userId = req.userId;
 

@@ -6,8 +6,6 @@ const Unauthorized = require("../errors/unauthorized");
 const MissingValues = require("../errors/missing-values");
 const NotFound = require("../errors/not-found");
 
-require("dotenv").config();
-
 class LoginController {
     static async login(req, res) {
         const { email, password } = req.body;
@@ -26,7 +24,7 @@ class LoginController {
             throw new Unauthorized("Senha incorreta");
         }
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || "drypzz", {
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
             expiresIn: "1h"
         });
 

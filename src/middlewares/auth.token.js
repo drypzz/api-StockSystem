@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 
 const User = require('../models/User');
 const Unauthorized = require("../errors/unauthorized");
@@ -21,7 +20,7 @@ class TokenController {
         const token = parts[1];
 
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET || "drypzz");
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
             const user = await User.findByPk(decoded.id);
 
