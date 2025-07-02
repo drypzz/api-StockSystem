@@ -34,8 +34,13 @@ const Order = database.db.define("order", {
     },
     paymentStatus: {
         type: database.db.Sequelize.STRING,
-        defaultValue: 'pending', // 'pending', 'approved', 'cancelled', 'failed'
+        defaultValue: 'pending',
         allowNull: false,
+    },
+    confirmationEmailSent: {
+        type: database.db.Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
     },
     paymentId: {
         type: database.db.Sequelize.STRING,

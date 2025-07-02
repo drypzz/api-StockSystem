@@ -7,10 +7,10 @@ const authMiddleware = require('../middlewares/auth.token');
 
 router.post("/order/:publicId/pay", authMiddleware.token, PaymentController.getOrCreatePayment);
 
-router.post("/payments/webhook", (req, res, next) => {
+router.post("/payments/webhook", async (req, res, next) => {
     try {
-        PaymentController.handleWebhook(req, res);
-    } catch(err) {
+        await PaymentController.handleWebhook(req, res, next);
+    } catch (err) {
         next(err);
     }
 });

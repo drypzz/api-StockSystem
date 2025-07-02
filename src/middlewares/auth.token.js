@@ -25,7 +25,6 @@ class TokenController {
             const user = await User.findByPk(decoded.id);
 
             if (!user) {
-                // Aqui explicitamente identificamos que o token é válido mas o usuário foi deletado
                 throw new Unauthorized("Usuário não encontrado. O token está vinculado a um usuário que foi deletado.");
             }
 

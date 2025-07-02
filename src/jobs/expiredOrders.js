@@ -17,8 +17,6 @@ cron.schedule('* * * * *', async () => {
         });
 
         for (const order of expiredOrders) {
-            console.log(`Pedido ${order.id} expirou. Cancelando...`);
-
             await payment.cancel({ id: order.paymentId });
 
             await order.update({ paymentStatus: 'cancelled' });
@@ -27,8 +25,6 @@ cron.schedule('* * * * *', async () => {
                 const orderedQty = product.order_products.quantity;
                 await product.increment('quantity', { by: orderedQty });
             }
-
-            console.log(`Pedido ${order.id} cancelado e estoque restaurado.`);
         }
     } catch (error) {
         console.error('Erro ao processar pedidos expirados:', error);

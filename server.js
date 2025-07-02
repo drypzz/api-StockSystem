@@ -12,13 +12,16 @@ app.use(cors());
 app.use(express.json());
 
 async function loadSecrets() {
-    console.log('Carregando segredos do Secret Manager...');
     const secretManagerClient = new SecretManagerServiceClient();
     const secretNames = [
         'JWT_SECRET',
         'DATABASE_URL',
         'MERCADO_PAGO_ACCESS_TOKEN',
-        'BACKEND_URL'
+        'BACKEND_URL',
+        'G_CLIENT_ID',
+        'G_CLIENT_SECRET',
+        'G_REFRESH_TOKEN',
+        'G_SENDER_EMAIL'
     ];
     const projectId = 'stocksystem-464322';
 
@@ -28,7 +31,6 @@ async function loadSecrets() {
             const [version] = await secretManagerClient.accessSecretVersion({ name: secretPath });
             const secretValue = version.payload.data.toString('utf8');
             process.env[name] = secretValue;
-            console.log(`Segredo '${name}' carregado.`);
         } catch (error) {
             console.error(`ERRO FATAL ao carregar o segredo '${name}':`, error);
             process.exit(1);
