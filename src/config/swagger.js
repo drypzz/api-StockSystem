@@ -27,7 +27,7 @@ const options = {
     },
     servers: [
       {
-        url: process.env.BACKEND_URL || 'https://stocksystem-464322.rj.r.appspot.com',
+        url: process.env.BACKEND_URL || 'https://api.stksystem.shop',
         description: 'Servidor de Produção (Google App Engine)',
       },
     ],
