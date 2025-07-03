@@ -2,22 +2,19 @@
 
 > API RESTful para um sistema de e-commerce completo, desenvolvida com uma arquitetura cloud-native em Node.js e implantada no Google App Engine.
 
-<p align="center">
+<div align="center">
   <a href="https://stksystem.vercel.app" target="_blank">
-    <img alt="Ver Frontend" src="https://img.shields.io/badge/Ver%20Frontend-stksystem.vercel.app-%23000000?style=for-the-badge&logo=vercel">
+    <img alt="Ver Frontend" src="https://img.shields.io/badge/Ver%20Frontend-stksystem-%23000000?style=for-the-badge&logo=vercel">
   </a>
-  <a href="https://stocksystem-464322.rj.r.appspot.com/api/v1/docs" target="_blank">
-    <img alt="Documentação da API" src="https://img.shields.io/badge/Documentação-API-blueviolet?style=for-the-badge&logo=swagger">
-  </a>
-  <a href="#">
-    <img alt="Deploy no Google Cloud" src="https://img.shields.io/badge/Deploy-Google%20App%20Engine-%234285F4?style=for-the-badge&logo=google-cloud">
-  </a>
-</p>
+</div>
+
+---
 
 [![Status](https://img.shields.io/badge/status-ativo-brightgreen.svg?style=for-the-badge)]()
 [![Node.js](https://img.shields.io/badge/Node.js-v20+-339933?style=for-the-badge&logo=node.js)]()
 [![Express.js](https://img.shields.io/badge/Express.js-5.x-000000?style=for-the-badge&logo=express)]()
 [![Sequelize](https://img.shields.io/badge/Sequelize-6.x-52B0E7?style=for-the-badge&logo=sequelize)]()
+[![Documentação](https://img.shields.io/badge/Documentação-API-blueviolet?style=for-the-badge&logo=swagger)]()
 
 ---
 
