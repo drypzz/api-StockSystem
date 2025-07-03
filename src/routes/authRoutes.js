@@ -8,52 +8,33 @@ const RegisterController = require("../middlewares/auth.register");
  * @swagger
  * tags:
  *   name: Auth
- *   description: Rotas públicas de autenticação
+ *   description: Rotas de autenticação de usuários
  */
 
 /**
  * @swagger
  * /api/v1/login:
  *   post:
- *     summary: Realiza o login do usuário
+ *     summary: Autentica um usuário e retorna um token JWT
  *     tags: [Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 example: joao@email.com
- *               password:
- *                 type: string
- *                 example: 123123
+ *             $ref: '#/components/schemas/LoginRequest'
  *     responses:
- *       200:
- *         description: Login realizado com sucesso
+ *       '200':
+ *         description: Login bem-sucedido
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 token:
- *                   type: string
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
- *       400:
- *         description: Email e senha são obrigatórios
- *       401:
- *         description: Senha inválida
- *       404:
- *         description: Usuário não encontrado
- *       500:
- *         description: Erro interno do servidor
+ *               $ref: '#/components/schemas/TokenResponse'
+ *       '401':
+ *         $ref: '#/components/responses/Unauthorized'
+ *       '404':
+ *         $ref: '#/components/responses/NotFound'
  */
 router.post("/login", LoginController.login);
 
@@ -61,44 +42,24 @@ router.post("/login", LoginController.login);
  * @swagger
  * /api/v1/register:
  *   post:
- *     summary: Cria um novo usuário
+ *     summary: Registra um novo usuário
  *     tags: [Auth]
+ *     security: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *               - email
- *               - password
- *             properties:
- *               name:
- *                 type: string
- *                 example: João Silva
- *               email:
- *                 type: string
- *                 example: joao@email.com
- *               password:
- *                 type: string
- *                 example: 123123
+ *             $ref: '#/components/schemas/NewUser'
  *     responses:
- *       201:
+ *       '201':
  *         description: Usuário criado com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 newUser:
- *                   $ref: '#/components/schemas/User'
- *       400:
- *         description: Campos obrigatórios ausentes ou email já registrado
- *       500:
- *         description: Erro interno do servidor
+ *               $ref: '#/components/schemas/User'
+ *       '409':
+ *         $ref: '#/components/responses/Conflict'
  */
 router.post("/register", RegisterController.register);
 

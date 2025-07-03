@@ -1,53 +1,34 @@
 const express = require("express");
 const router = express.Router();
-
 const userController = require("../controllers/userController");
-const create = require("../middlewares/auth.register");
-
 
 /**
  * @swagger
  * tags:
  *   name: Users
- *   description: Operações relacionadas a usuários
+ *   description: Operações de gerenciamento de usuários (normalmente para administradores)
  */
 
 /**
  * @swagger
  * /api/v1/user:
  *   get:
- *     summary: Retorna todos os usuários
+ *     summary: Lista todos os usuários
  *     tags: [Users]
- *     security:
- *       - bearerAuth: []
+ *     description: Retorna uma lista de todos os usuários registrados no sistema.
  *     responses:
- *       200:
- *         description: Lista de usuários
+ *       '200':
+ *         description: Uma lista de usuários
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 count:
- *                   type: integer
- *                   example: 2
- *                 users:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/User'
- *                 _links:
- *                   type: object
- *                   additionalProperties:
- *                     type: object
- *                     properties:
- *                       href:
- *                         type: string
- *                         example: "/api/v1/user"
- *                       method:
- *                         type: string
- *                         example: "GET"
- *       500:
- *         description: Erro interno do servidor
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       '401':
+ *         $ref: '#/components/responses/Unauthorized'
+ *       '500':
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get("/user", userController.getAll);
 
@@ -55,90 +36,36 @@ router.get("/user", userController.getAll);
  * @swagger
  * /api/v1/user/{id}:
  *   get:
- *     summary: Retorna um usuário pelo ID
+ *     summary: Busca um usuário pelo ID
  *     tags: [Users]
- *     security:
- *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID do usuário
+ *       - $ref: '#/components/parameters/idParam'
  *     responses:
- *       200:
- *         description: Usuário encontrado
+ *       '200':
+ *         description: O usuário encontrado
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
- *       404:
- *         description: Usuário não encontrado
- *       500:
- *         description: Erro interno do servidor
+ *       '401':
+ *         $ref: '#/components/responses/Unauthorized'
+ *       '404':
+ *         $ref: '#/components/responses/NotFound'
+ *       '500':
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get("/user/:id", userController.getByID);
 
 /**
  * @swagger
- * /api/v1/user:
- *   post:
- *     summary: Cria um novo usuário
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - email
- *               - password
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       201:
- *         description: Usuário criado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Usuário criado com sucesso"
- *                 user:
- *                   $ref: '#/components/schemas/User'
- *       400:
- *         description: Dados inválidos
- */
-router.post("/user", create.register);
-
-/**
- * @swagger
  * /api/v1/user/{id}:
  *   put:
- *     summary: Atualiza um usuário pelo ID
+ *     summary: Atualiza um usuário existente
  *     tags: [Users]
- *     security:
- *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID do usuário
+ *       - $ref: '#/components/parameters/idParam'
  *     requestBody:
+ *       description: Apenas os campos a serem atualizados. A senha é opcional.
  *       required: true
  *       content:
  *         application/json:
@@ -149,27 +76,25 @@ router.post("/user", create.register);
  *                 type: string
  *               email:
  *                 type: string
+ *                 format: email
  *               password:
  *                 type: string
+ *                 description: "Opcional. Envie apenas se desejar alterar a senha."
  *     responses:
- *       200:
+ *       '200':
  *         description: Usuário atualizado com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Usuário atualizado com sucesso"
- *                 user:
- *                   $ref: '#/components/schemas/User'
- *       400:
- *         description: Email já cadastrado
- *       404:
- *         description: Usuário não encontrado
- *       500:
- *         description: Erro interno do servidor
+ *               $ref: '#/components/schemas/User'
+ *       '401':
+ *         $ref: '#/components/responses/Unauthorized'
+ *       '404':
+ *         $ref: '#/components/responses/NotFound'
+ *       '409':
+ *         $ref: '#/components/responses/Conflict'
+ *       '500':
+ *         $ref: '#/components/responses/ServerError'
  */
 router.put("/user/:id", userController.update);
 
@@ -177,45 +102,25 @@ router.put("/user/:id", userController.update);
  * @swagger
  * /api/v1/user/{id}:
  *   delete:
- *     summary: Deleta um usuário pelo ID
+ *     summary: Deleta um usuário
  *     tags: [Users]
- *     security:
- *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID do usuário
+ *       - $ref: '#/components/parameters/idParam'
  *     responses:
- *       200:
- *         description: Usuário deletado com sucesso
+ *       '204':
+ *         description: Usuário deletado com sucesso (sem conteúdo)
+ *       '401':
+ *         $ref: '#/components/responses/Unauthorized'
+ *       '403':
+ *         description: "Ação proibida (ex: tentar deletar a própria conta)."
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Usuário deletado com sucesso"
- *                 _links:
- *                   type: object
- *                   additionalProperties:
- *                     type: object
- *                     properties:
- *                       href:
- *                         type: string
- *                         example: "/api/v1/user"
- *                       method:
- *                         type: string
- *                         example: "GET"
- *       403:
- *         description: Tentativa de deletar própria conta
- *       404:
- *         description: Usuário não encontrado
- *       500:
- *         description: Erro interno do servidor
+ *               $ref: '#/components/schemas/Error'
+ *       '404':
+ *         $ref: '#/components/responses/NotFound'
+ *       '500':
+ *         $ref: '#/components/responses/ServerError'
  */
 router.delete("/user/:id", userController.delete);
 

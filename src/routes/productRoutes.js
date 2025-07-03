@@ -1,51 +1,31 @@
 const express = require("express");
 const router = express.Router();
-
 const productController = require("../controllers/productController");
 
 /**
  * @swagger
  * tags:
  *   name: Products
- *   description: Operações relacionadas a produtos
+ *   description: Operações para gerenciamento de produtos
  */
 
 /**
  * @swagger
  * /api/v1/product:
  *   get:
- *     summary: Retorna todos os produtos
+ *     summary: Lista todos os produtos
  *     tags: [Products]
- *     security:
- *       - bearerAuth: []
  *     responses:
- *       200:
- *         description: Lista de produtos
+ *       '200':
+ *         description: Uma lista de produtos
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 count:
- *                   type: integer
- *                   example: 5
- *                 products:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Product'
- *                 _links:
- *                   type: object
- *                   additionalProperties:
- *                     type: object
- *                     properties:
- *                       href:
- *                         type: string
- *                         example: "/api/v1/product"
- *                       method:
- *                         type: string
- *                         example: "GET"
- *       500:
- *         description: Erro interno do servidor
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ *       '500':
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get("/product", productController.getAll);
 
@@ -53,40 +33,21 @@ router.get("/product", productController.getAll);
  * @swagger
  * /api/v1/product/{id}:
  *   get:
- *     summary: Retorna um produto pelo ID
+ *     summary: Busca um produto pelo ID
  *     tags: [Products]
- *     security:
- *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID do produto
+ *       - $ref: '#/components/parameters/idParam'
  *     responses:
- *       200:
- *         description: Produto encontrado
+ *       '200':
+ *         description: O produto encontrado
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 product:
- *                   $ref: '#/components/schemas/Product'
- *                 _links:
- *                   type: object
- *                   additionalProperties:
- *                     type: object
- *                     properties:
- *                       href:
- *                         type: string
- *                       method:
- *                         type: string
- *       404:
- *         description: Produto não encontrado
- *       500:
- *         description: Erro interno do servidor
+ *               $ref: '#/components/schemas/Product'
+ *       '404':
+ *         $ref: '#/components/responses/NotFound'
+ *       '500':
+ *         $ref: '#/components/responses/ServerError'
  */
 router.get("/product/:id", productController.getByID);
 
@@ -96,57 +57,23 @@ router.get("/product/:id", productController.getByID);
  *   post:
  *     summary: Cria um novo produto
  *     tags: [Products]
- *     security:
- *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *               - price
- *               - quantity
- *               - description
- *               - categoryId
- *             properties:
- *               name:
- *                 type: string
- *               price:
- *                 type: number
- *               quantity:
- *                 type: integer
- *               description:
- *                 type: string
- *               categoryId:
- *                 type: integer
+ *             $ref: '#/components/schemas/Product'
  *     responses:
- *       201:
+ *       '201':
  *         description: Produto criado com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Produto criado com sucesso"
- *                 product:
- *                   $ref: '#/components/schemas/Product'
- *                 _links:
- *                   type: object
- *                   additionalProperties:
- *                     type: object
- *                     properties:
- *                       href:
- *                         type: string
- *                       method:
- *                         type: string
- *       400:
- *         description: Dados inválidos, categoria inexistente, quantidade negativa ou preço negativo
- *       500:
- *         description: Erro interno do servidor
+ *               $ref: '#/components/schemas/Product'
+ *       '400':
+ *         $ref: '#/components/responses/BadRequest'
+ *       '500':
+ *         $ref: '#/components/responses/ServerError'
  */
 router.post("/product", productController.create);
 
@@ -154,62 +81,29 @@ router.post("/product", productController.create);
  * @swagger
  * /api/v1/product/{id}:
  *   put:
- *     summary: Atualiza um produto pelo ID
+ *     summary: Atualiza um produto existente
  *     tags: [Products]
- *     security:
- *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID do produto
+ *       - $ref: '#/components/parameters/idParam'
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               price:
- *                 type: number
- *               quantity:
- *                 type: integer
- *               description:
- *                 type: string
- *               categoryId:
- *                 type: integer
+ *             $ref: '#/components/schemas/Product'
  *     responses:
- *       200:
+ *       '200':
  *         description: Produto atualizado com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Produto atualizado com sucesso"
- *                 product:
- *                   $ref: '#/components/schemas/Product'
- *                 _links:
- *                   type: object
- *                   additionalProperties:
- *                     type: object
- *                     properties:
- *                       href:
- *                         type: string
- *                       method:
- *                         type: string
- *       400:
- *         description: Categoria não encontrada
- *       404:
- *         description: Produto não encontrado
- *       500:
- *         description: Erro interno do servidor
+ *               $ref: '#/components/schemas/Product'
+ *       '400':
+ *         $ref: '#/components/responses/BadRequest'
+ *       '404':
+ *         $ref: '#/components/responses/NotFound'
+ *       '500':
+ *         $ref: '#/components/responses/ServerError'
  */
 router.put("/product/:id", productController.update);
 
@@ -217,41 +111,17 @@ router.put("/product/:id", productController.update);
  * @swagger
  * /api/v1/product/{id}:
  *   delete:
- *     summary: Deleta um produto pelo ID
+ *     summary: Deleta um produto
  *     tags: [Products]
- *     security:
- *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID do produto
+ *       - $ref: '#/components/parameters/idParam'
  *     responses:
- *       200:
- *         description: Produto deletado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Produto deletado com sucesso"
- *                 _links:
- *                   type: object
- *                   additionalProperties:
- *                     type: object
- *                     properties:
- *                       href:
- *                         type: string
- *                       method:
- *                         type: string
- *       404:
- *         description: Produto não encontrado
- *       500:
- *         description: Erro interno do servidor
+ *       '204':
+ *         description: Produto deletado com sucesso (sem conteúdo)
+ *       '404':
+ *         $ref: '#/components/responses/NotFound'
+ *       '500':
+ *         $ref: '#/components/responses/ServerError'
  */
 router.delete("/product/:id", productController.delete);
 

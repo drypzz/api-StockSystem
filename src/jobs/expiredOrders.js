@@ -16,9 +16,13 @@ cron.schedule('* * * * *', async () => {
             include: [{ model: Product, as: 'products' }]
         });
 
-        for (const order of expiredOrders) {
-            await payment.cancel({ id: order.paymentId });
+        if (expiredOrders.length === 0) {
+            return;
+        }
 
+        for (const order of expiredOrders) {
+
+            await payment.cancel({ id: order.paymentId });
             await order.update({ paymentStatus: 'cancelled' });
 
             for (const product of order.products) {
@@ -27,6 +31,6 @@ cron.schedule('* * * * *', async () => {
             }
         }
     } catch (error) {
-        console.error('Erro ao processar pedidos expirados:', error);
+        console.error('[CRON JOB] Erro ao processar pedidos expirados:', error);
     }
 });

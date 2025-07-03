@@ -1,52 +1,42 @@
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const schemas = require('../components/schemas');
-require('dotenv').config();
-
-const port = process.env.API_PORT || 3000;
+const components = require('./swaggerComponents'); 
+const packageJson = require('../../package.json');
 
 const options = {
   definition: {
-    openapi: '3.0.0',
+    openapi: '3.0.3',
     info: {
-      title: 'API RESTful com Node.js, Express e Sequelize',
-      version: '1.0.0',
+      title: 'StockSystem API',
+      version: packageJson.version,
       description: `
-      Esta API foi desenvolvida para fins de estudo e prática de boas práticas com Node.js, Express, Sequelize e autenticação JWT.  
-      Ela cobre os principais conceitos de um sistema CRUD completo, incluindo:
+        API RESTful para um sistema de e-commerce completo, com gestão de usuários, produtos, categorias, pedidos e integração de pagamento via PIX (Mercado Pago).
+        A arquitetura é cloud-native, implantada no **Google App Engine** e utiliza o **Google Secret Manager** para o gerenciamento de credenciais.
 
-      - Autenticação de usuários (JWT)
-      - Gerenciamento de usuários, produtos, categorias e pedidos
-      - Documentação interativa com Swagger
-
-      > ⚙️ Tecnologias: Node.js, Express, Sequelize, MySQL, JWT, Swagger.
+        **Funcionalidades:**
+        - Autenticação JWT
+        - CRUD completo para todas as entidades
+        - Fluxo de pagamento com QR Code
+        - Notificações de Webhook
+        - Envio de e-mails transacionais
       `,
       contact: {
-        name: 'Drypzz',
-        url: 'https://drypzz.netlify.app'
-      }
+        name: 'drypzz',
+        url: 'https://github.com/drypzz/api-StockSystem',
+      },
     },
     servers: [
       {
-        url: `http://localhost:${port}`,
-        description: 'Servidor local de desenvolvimento'
-      }
-    ],
-    components: {
-      schemas,
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
+        url: process.env.BACKEND_URL || 'https://stocksystem-464322.rj.r.appspot.com',
+        description: 'Servidor de Produção (Google App Engine)',
       },
-    },
+    ],
+    components: components,
     security: [
       { bearerAuth: [] }
     ],
   },
-  apis: ['./src/routes/*.js'], // Caminho para os comentários JSDoc nas rotas
+  apis: ['./src/routes/*.js'],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
