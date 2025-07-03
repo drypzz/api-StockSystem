@@ -21,7 +21,8 @@ async function loadSecrets() {
         'G_CLIENT_ID',
         'G_CLIENT_SECRET',
         'G_REFRESH_TOKEN',
-        'G_SENDER_EMAIL'
+        'G_SENDER_EMAIL',
+        'HOSTINGER_EMAIL_PASSWORD'
     ];
     const projectId = 'stocksystem-464322';
 

@@ -1,3 +1,4 @@
+/*
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 
@@ -30,5 +31,32 @@ const createTransporter = async () => {
 
     return transporter;
 };
+
+module.exports = createTransporter;
+*/
+
+const nodemailer = require('nodemailer');
+
+async function createTransporter() {
+    
+    const smtpUser = 'contact@stksystem.shop';
+    const smtpPass = process.env.HOSTINGER_EMAIL_PASSWORD;
+
+    if (!smtpPass) {
+        throw new Error('HOSTINGER_EMAIL_PASSWORD não está definido.');
+    }
+
+    const transporter = nodemailer.createTransport({
+        host: "smtp.hostinger.com",
+        port: 465,
+        secure: true,
+        auth: {
+            user: smtpUser,
+            pass: smtpPass,
+        },
+    });
+
+    return transporter;
+}
 
 module.exports = createTransporter;
