@@ -3,8 +3,8 @@
 > API RESTful para um sistema de e-commerce completo, desenvolvida com uma arquitetura cloud-native em Node.js e implantada no Google App Engine.
 
 <div align="center">
-  <a href="https://stksystem.vercel.app" target="_blank">
-    <img alt="Ver Frontend" src="https://img.shields.io/badge/Ver%20Frontend-stksystem-%23000000?style=for-the-badge&logo=vercel">
+  <a href="https://www.stksystem.shop" target="_blank">
+    <img alt="Ver Frontend" src="https://img.shields.io/badge/Build%20-stksystem-%23000000?style=for-the-badge&logo=vercel">
   </a>
 </div>
 
@@ -14,7 +14,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-v20+-339933?style=for-the-badge&logo=node.js)]()
 [![Express.js](https://img.shields.io/badge/Express.js-5.x-000000?style=for-the-badge&logo=express)]()
 [![Sequelize](https://img.shields.io/badge/Sequelize-6.x-52B0E7?style=for-the-badge&logo=sequelize)]()
-[![Documentação](https://img.shields.io/badge/Documentação-API-blueviolet?style=for-the-badge&logo=swagger)]()
+[![Documentação](https://img.shields.io/badge/Documentação-API-blueviolet?style=for-the-badge&logo=swagger)](https://api.stksystem.shop/api/v1/docs)
 
 ---
 
@@ -106,7 +106,7 @@ gcloud app deploy
 
 A documentação interativa da API, gerada com Swagger, está disponível no endpoint `/api/v1/docs` da aplicação em produção.
 
-**URL de Produção:** **[https://stocksystem-464322.rj.r.appspot.com/api/v1/docs](https://stocksystem-464322.rj.r.appspot.com/api/v1/docs)**
+**URL de Produção:** **[https://api.stksystem.shop/api/v1/docs](https://api.stksystem.shop/api/v1/docs)**
 
 Lá, é possível visualizar e testar todos os endpoints.
 

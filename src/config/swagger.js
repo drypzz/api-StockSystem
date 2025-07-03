@@ -22,7 +22,7 @@ const options = {
       `,
       contact: {
         name: 'drypzz',
-        url: 'https://github.com/drypzz/api-StockSystem',
+        url: 'https://drypzz.netlify.app',
       },
     },
     servers: [
