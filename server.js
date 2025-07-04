@@ -56,16 +56,24 @@ async function startServer() {
     const categoryRoutes = require("./src/routes/categoryRoutes");
     const productRoutes = require("./src/routes/productRoutes");
     const paymentRoutes = require("./src/routes/paymentRoutes");
+    const supportRoutes = require("./src/routes/supportRoutes");
+
     const TokenController = require("./src/middlewares/auth.token");
+    
+    app.get("/", (req, res) => { res.send("API is Alive...") });
 
     app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
     app.use("/api/v1", authRoutes);
-    app.get("/", (req, res) => { res.send("Connected...") });
+
     app.get("/api/v1/auth/validate", TokenController.token, (req, res) => {
         res.status(200).json({ message: "Token is valid." });
     });
 
+    app.use("/api/v1", supportRoutes);
+    
     app.use("/api/v1", paymentRoutes);
+
     app.use(TokenController.token);
     app.use("/api/v1", userRoutes);
     app.use("/api/v1", orderRoutes);
