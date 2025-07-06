@@ -1,7 +1,9 @@
 const express = require("express");
 const { SecretManagerServiceClient } = require("@google-cloud/secret-manager");
 const app = express();
-const cors = require("cors"); 
+const cors = require("cors");
+
+const packageJson = require('./package.json');
 
 if (process.env.NODE_ENV !== 'production') {
     require("dotenv").config();
@@ -60,7 +62,32 @@ async function startServer() {
 
     const TokenController = require("./src/middlewares/auth.token");
     
-    app.get("/", (req, res) => { res.send("API is Alive...") });
+    app.get("/", async (req, res) => {
+        try {
+            await database.db.authenticate();
+
+            res.status(200).json({
+                message: "STK API",
+                version: packageJson.version,
+                status: {
+                    api: "online",
+                    database: "online"
+                }
+            });
+
+        } catch (error) {
+            console.error("Health check falhou: Impossível conectar ao banco de dados.", error);
+
+            res.status(503).json({
+                message: "STK API",
+                version: packageJson.version,
+                status: {
+                    api: "online",
+                    database: "offline"
+                }
+            });
+        }
+    });
 
     app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
