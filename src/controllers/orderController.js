@@ -11,7 +11,16 @@ const client = new MercadoPagoConfig({
   accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN,
 });
 
+/**
+ * @class OrderController
+ * @summary Gerencia o ciclo de vida dos pedidos, desde a criação até o cancelamento.
+*/
 class OrderController {
+
+  /**
+    * @method getAll
+    * @summary Lista todos os pedidos do sistema (geralmente para fins administrativos).
+  */
   static async getAll(req, res) {
     const order = await Order.findAll();
 
@@ -27,6 +36,10 @@ class OrderController {
     });
   }
 
+  /**
+   * @method getByID
+   * @summary Busca um pedido específico pelo seu 'publicId', verificando a permissão do usuário.
+  */
   static async getByID(req, res, next) {
     try {
       const { publicId } = req.params;
@@ -57,6 +70,12 @@ class OrderController {
     }
   }
 
+  /**
+   * @method getByUser
+   * @summary Lista todos os pedidos de um usuário autenticado, com detalhes dos produtos.
+   * @description Otimizado para buscar todos os produtos de uma vez e "reidratar" os pedidos,
+   * verificando a integridade dos dados se um produto foi deletado do catálogo.
+  */
   static async getByUser(req, res, next) {
     try {
       const userId = req.userId;
@@ -83,7 +102,7 @@ class OrderController {
 
       const responseOrders = userOrders.map(order => {
         const originalItemCount = order.order_products.length;
-        
+
         if (originalItemCount === 0) {
           return {
             ...order.toJSON(),
@@ -119,6 +138,10 @@ class OrderController {
     }
   }
 
+  /**
+   * @method create
+   * @summary Cria um novo pedido, valida o estoque e deduz a quantidade dos produtos.
+  */
   static async create(req, res) {
     const { items } = req.body;
     const userId = req.userId;
@@ -190,6 +213,12 @@ class OrderController {
     });
   }
 
+  /**
+   * @method delete
+   * @summary Cancela um pedido que ainda não foi pago.
+   * @description Restaura o estoque dos produtos, tenta cancelar o pagamento no gateway (Mercado Pago)
+   * e, por fim, deleta o pedido do banco de dados.
+  */
   static async delete(req, res, next) {
     try {
       const { publicId } = req.params;

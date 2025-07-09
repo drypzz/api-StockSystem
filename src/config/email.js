@@ -37,6 +37,13 @@ module.exports = createTransporter;
 
 const nodemailer = require('nodemailer');
 
+/**
+ * @function createTransporter
+ * @summary Configura e cria uma instância do Nodemailer para envio de e-mails via SMTP.
+ * @description Utiliza as credenciais SMTP da Hostinger para criar um "transportador"
+ * reutilizável, responsável por despachar os e-mails transacionais da aplicação.
+ * A senha é obtida de forma segura a partir das variáveis de ambiente.
+*/
 async function createTransporter() {
     
     const smtpUser = 'contact@stksystem.shop';
@@ -49,7 +56,7 @@ async function createTransporter() {
     const transporter = nodemailer.createTransport({
         host: "smtp.hostinger.com",
         port: 465,
-        secure: true,
+        secure: true, // Usa SSL/TLS.
         auth: {
             user: smtpUser,
             pass: smtpPass,

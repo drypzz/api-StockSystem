@@ -4,9 +4,24 @@ const createTransporter = require('../config/email');
 
 const database = require('../config/database');
 
+/**
+ * @function sendOrderConfirmation
+ * @summary Envia um e-mail de confirmação de pedido de forma segura e idempotente.
+ * @description Esta função realiza duas operações principais:
+ * 1. **Transação Atômica:** Utiliza uma transação com 'lock' no banco de dados para verificar
+ * se o e-mail já foi enviado e, em caso negativo, marca o pedido como notificado.
+ * Isso previne o envio de múltiplos e-mails para o mesmo pedido em ambientes concorrentes.
+ * 2. **Envio de E-mail:** Se a notificação for necessária, a função busca os detalhes completos
+ * do pedido, monta um e-mail em HTML e o envia. A falha no envio do e-mail não reverte a
+ * transação, garantindo que não haverá novas tentativas de envio.
+ * @param {string|number} orderId - O ID do pedido a ser notificado.
+*/
 async function sendOrderConfirmation(orderId) {
     let orderData;
 
+    // --- Bloco 1: Transação Atômica para Marcar o Pedido ---
+    // Garante que a verificação e a atualização do status 'confirmationEmailSent'
+    // ocorram como uma única operação, evitando condições de corrida.
     try {
         await database.db.transaction(async (t) => {
             const order = await Order.findByPk(orderId, {
@@ -35,6 +50,8 @@ async function sendOrderConfirmation(orderId) {
         return;
     }
 
+     // --- Bloco 2: Preparação e Envio do E-mail ---
+    // Esta parte executa fora da transação. A falha aqui não afetará o banco.
     try {
         const fullOrder = await Order.findByPk(orderId, {
             include: [{ model: Product, as: 'products', required: true }]

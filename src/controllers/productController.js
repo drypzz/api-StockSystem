@@ -5,8 +5,16 @@ const NotFound = require("../errors/not-found");
 const MissingValues = require("../errors/missing-values");
 const Conflict = require("../errors/conflict");
 
+/**
+ * @class ProductController
+ * @summary Gerencia as operações de CRUD para Produtos.
+*/
 class ProductController {
 
+    /**
+     * @method getAll
+     * @summary Lista todos os produtos com links HATEOAS.
+    */
     static async getAll(req, res) {
         const products = await Product.findAll();
 
@@ -22,6 +30,10 @@ class ProductController {
         });
     }
 
+    /**
+     * @method getByID
+     * @summary Busca um único produto pelo ID.
+    */
     static async getByID(req, res) {
         const id = Number(req.params.id);
 
@@ -40,6 +52,10 @@ class ProductController {
         });
     }
 
+    /**
+     * @method create
+     * @summary Cria um novo produto, validando os dados e a existência da categoria.
+    */
     static async create(req, res) {
         const { name, price, quantity, description, categoryId } = req.body;
 
@@ -67,6 +83,10 @@ class ProductController {
         });
     }
 
+    /**
+     * @method update
+     * @summary Atualiza os dados de um produto existente.
+    */
     static async update(req, res) {
         const id = Number(req.params.id);
         const { name, price, description, quantity, categoryId } = req.body;
@@ -108,6 +128,10 @@ class ProductController {
         });
     }
 
+    /**
+     * @method delete
+     * @summary Deleta um produto do banco de dados.
+    */
     static async delete(req, res) {
         const id = Number(req.params.id);
 

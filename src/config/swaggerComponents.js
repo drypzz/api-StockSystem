@@ -1,4 +1,11 @@
+/**
+ * @summary Centraliza todos os componentes reutilizáveis da especificação OpenAPI.
+ * @description Este objeto define schemas de dados, respostas padronizadas, parâmetros
+ * e esquemas de segurança, promovendo a consistência e a manutenibilidade da
+ * documentação da API.
+*/
 const components = {
+  // 'schemas' define os modelos de dados para requests e responses.
   schemas: {
     User: {
       type: 'object',
@@ -156,6 +163,7 @@ const components = {
     },
   },
 
+  // 'responses' define respostas HTTP padronizadas para reutilização.
   responses: {
     Unauthorized: {
       description: 'Não autorizado (token ausente ou inválido)',
@@ -199,6 +207,7 @@ const components = {
     },
   },
 
+  // 'parameters' define parâmetros de requisição comuns.
   parameters: {
     idParam: {
       in: 'path',
@@ -216,6 +225,7 @@ const components = {
     },
   },
 
+  // 'securitySchemes' define os métodos de autenticação da API.
   securitySchemes: {
     bearerAuth: {
       type: 'http',

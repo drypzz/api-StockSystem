@@ -5,8 +5,16 @@ const NotFound = require("../errors/not-found");
 const MissingValues = require("../errors/missing-values");
 const Conflict = require("../errors/conflict");
 
+/**
+ * @class CategoryController
+ * @summary Gerencia as operações de CRUD (Criar, Ler, Atualizar, Deletar) para Categorias.
+*/
 class CategoryController {
 
+    /**
+     * @method getAll
+     * @summary Lista todas as categorias com links HATEOAS.
+    */
     static async getAll(req, res) {
         const category = await Category.findAll();
 
@@ -22,6 +30,10 @@ class CategoryController {
         });
     }
 
+    /**
+     * @method getByID
+     * @summary Busca uma única categoria pelo ID.
+    */
     static async getByID(req, res) {
         const id = Number(req.params.id);
         const category = await Category.findByPk(id);
@@ -40,6 +52,10 @@ class CategoryController {
         });
     }
 
+    /**
+     * @method create
+     * @summary Cria uma nova categoria, validando e evitando nomes duplicados.
+    */
     static async create(req, res) {
         const { name } = req.body;
 
@@ -63,6 +79,10 @@ class CategoryController {
         });
     }
 
+    /**
+     * @method update
+     * @summary Atualiza uma categoria existente, checando por conflitos de nome.
+    */
     static async update(req, res) {
         const id = Number(req.params.id);
         const { name } = req.body;
@@ -91,6 +111,10 @@ class CategoryController {
         });
     }
 
+    /**
+     * @method delete
+     * @summary Deleta uma categoria, mas impede a exclusão se houver produtos vinculados a ela.
+    */
     static async delete(req, res) {
         const id = Number(req.params.id);
 

@@ -1,6 +1,14 @@
+/**
+ * @summary Arquivo de configuração principal para a documentação da API com Swagger.
+ * @description Utiliza 'swagger-jsdoc' para gerar a especificação OpenAPI a partir
+ * de metadados e comentários JSDoc nos arquivos de rotas. Define informações
+ * gerais da API, servidores, e esquemas de segurança. O resultado é servido
+ * pela interface do 'swagger-ui-express'.
+*/
+
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const components = require('./swaggerComponents'); 
+const components = require('./swaggerComponents');
 const packageJson = require('../../package.json');
 
 const options = {
@@ -29,6 +37,12 @@ const options = {
       {
         url: process.env.BACKEND_URL || 'https://api.stksystem.shop',
         description: 'Servidor de Produção (Google App Engine)',
+      },
+    ],
+    tags: [
+      {
+        name: 'Support',
+        description: 'Operações relacionadas ao suporte e atendimento ao cliente.',
       },
     ],
     components: components,

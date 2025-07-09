@@ -6,8 +6,16 @@ const NotFound = require("../errors/not-found");
 const Conflict = require("../errors/conflict");
 const Unauthorized = require("../errors/unauthorized");
 
+/**
+ * @class UserController
+ * @summary Gerencia as operações de CRUD para Usuários.
+*/
 class UserController {
 
+    /**
+     * @method getAll
+     * @summary Lista todos os usuários, omitindo dados sensíveis como senhas.
+    */
     static async getAll(req, res) {
         const users = await User.findAll();
 
@@ -27,6 +35,10 @@ class UserController {
         });
     }
 
+    /**
+     * @method getByID
+     * @summary Busca um único usuário pelo ID, também omitindo a senha.
+    */
     static async getByID(req, res) {
         const id = Number(req.params.id);
         const user = await User.findByPk(id);
@@ -51,6 +63,10 @@ class UserController {
         });
     }
 
+    /**
+     * @method update
+     * @summary Atualiza os dados de um usuário, permitindo alterar nome, e-mail (com verificação de duplicidade) e senha (com rehashing).
+    */
     static async update(req, res) {
         const id = Number(req.params.id);
         const { name, email, password } = req.body;
@@ -89,6 +105,12 @@ class UserController {
         });
     }
 
+    /**
+     * @method delete
+     * @summary Deleta a conta do próprio usuário autenticado.
+     * @description Impede a exclusão se houver pedidos pendentes e remove os pedidos
+     * antigos do usuário antes de deletar a conta para manter a integridade dos dados.
+    */
     static async delete(req, res, next) {
         try {
             const id = Number(req.params.id);

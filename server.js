@@ -13,6 +13,13 @@ const port = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
+/**
+ * @function loadSecrets
+ * @summary Carrega segredos do Google Secret Manager e os injeta em `process.env`.
+ * @description Essencial para a segurança em produção. Busca credenciais sensíveis (chaves de API, URL do banco)
+ * de um local seguro e as disponibiliza como variáveis de ambiente. Encerra a aplicação
+ * se um segredo não puder ser carregado, garantindo uma inicialização segura.
+*/
 async function loadSecrets() {
     const secretManagerClient = new SecretManagerServiceClient();
     const secretNames = [
@@ -41,6 +48,13 @@ async function loadSecrets() {
     }
 }
 
+/**
+ * @function startServer
+ * @summary Orquestra a inicialização completa da aplicação.
+ * @description Garante a ordem correta das operações: carrega os segredos (em produção),
+ * inicializa as dependências (rotas, banco de dados), aplica middlewares (CORS, JSON, autenticação),
+ * e por fim, conecta ao banco e inicia o servidor. Centraliza a lógica de startup.
+*/
 async function startServer() {
     console.log(`Iniciando aplicação em modo: ${process.env.NODE_ENV || 'development'}`);
 
@@ -62,6 +76,13 @@ async function startServer() {
 
     const TokenController = require("./src/middlewares/auth.token");
     
+    /**
+     * @route GET /
+     * @summary Endpoint de verificação de saúde (Health Check).
+     * @description Fornece um status rápido sobre a API e a conexão com o banco de dados.
+     * Retorna status 200 se tudo estiver online e 503 se o banco de dados estiver inacessível.
+     * Fundamental para monitoramento e diagnóstico automático.
+    */
     app.get("/", async (req, res) => {
         try {
             await database.db.authenticate();
@@ -107,6 +128,13 @@ async function startServer() {
     app.use("/api/v1", categoryRoutes);
     app.use("/api/v1", productRoutes);
 
+    /**
+     * @middleware Error Handler
+     * @summary Middleware "catch-all" para tratar erros da aplicação.
+     * @description Centraliza o tratamento de exceções. Retorna erros com status e mensagens
+     * customizadas (ex: 404, 400) ou um erro genérico 500 para falhas inesperadas,
+     * logando os detalhes no servidor para depuração e enviando uma resposta segura ao cliente.
+    */
     app.use((err, req, res, next) => {
         if (err.statusCode) {
             return res.status(err.statusCode).json({ message: err.message });

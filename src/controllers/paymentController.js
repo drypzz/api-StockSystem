@@ -15,7 +15,19 @@ const client = new MercadoPagoConfig({
   accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN,
 });
 
+/**
+ * @class PaymentController
+ * @summary Gerencia a criação de pagamentos e o recebimento de notificações (webhooks) do gateway.
+*/
 class PaymentController {
+
+  /**
+   * @method getOrCreatePayment
+   * @summary Gera ou obtém os dados de pagamento para um pedido.
+   * @description Método idempotente. Se já existe um pagamento válido, o retorna.
+   * Caso contrário, cria uma nova transação PIX no Mercado Pago, gera um QR Code
+   * customizado com logo e salva as informações no pedido.
+  */
   static async getOrCreatePayment(req, res, next) {
     try {
       const { publicId } = req.params;
@@ -174,6 +186,12 @@ class PaymentController {
     }
   }
 
+  /**
+   * @method handleWebhook
+   * @summary Recebe e processa notificações de pagamento do Mercado Pago.
+   * @description Quando um pagamento é aprovado, este método atualiza o status do pedido
+   * no banco de dados e dispara o serviço de notificação para enviar o e-mail de confirmação.
+  */
   static async handleWebhook(req, res, next) {
     try {
       const { body, query } = req;

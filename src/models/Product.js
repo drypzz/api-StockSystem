@@ -1,6 +1,13 @@
 const database = require("../config/database");
 const Category = require("./Category");
 
+/**
+ * @model Product
+ * @summary Define o modelo 'Product' para a tabela de produtos.
+ * @description Representa um item disponível para venda no catálogo. Contém
+ * informações como nome, descrição, preço, quantidade em estoque e a qual
+ * categoria pertence através da chave estrangeira 'categoryId'.
+*/
 const Product = database.db.define("product", {
     id: {
         type: database.db.Sequelize.INTEGER,

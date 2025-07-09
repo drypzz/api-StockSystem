@@ -6,7 +6,23 @@ const Unauthorized = require("../errors/unauthorized");
 const MissingValues = require("../errors/missing-values");
 const NotFound = require("../errors/not-found");
 
+/**
+ * @class LoginController
+ * @summary Gerencia o processo de login e autenticação do usuário.
+*/
 class LoginController {
+
+    /**
+     * @method login
+     * @summary Valida as credenciais e retorna um token JWT em caso de sucesso.
+     * @description O método executa as seguintes etapas:
+     * 1. Valida se 'email' e 'password' foram fornecidos.
+     * 2. Busca o usuário no banco de dados pelo e-mail.
+     * 3. Compara a senha fornecida com o hash armazenado no banco usando bcrypt.
+     * 4. Se tudo for válido, gera um token JWT com o ID do usuário, válido por 1 hora.
+     * 5. Retorna o token e os dados básicos do usuário.
+     * Erros são lançados usando classes customizadas para serem tratados pelo middleware.
+    */
     static async login(req, res) {
         const { email, password } = req.body;
 

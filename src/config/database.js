@@ -1,5 +1,12 @@
 const Sequelize = require("sequelize");
 
+/**
+ * @class Database
+ * @summary Classe singleton para gerenciar a conexão com o banco de dados.
+ * @description Centraliza a configuração e inicialização do Sequelize.
+ * Ela lê a URL de conexão do ambiente, estabelece a conexão com um banco
+ * PostgreSQL e configura as opções de SSL necessárias para ambientes de produção na nuvem.
+*/
 class Database {
     constructor() {
         this.init();
@@ -15,7 +22,7 @@ class Database {
             {
                 dialect: 'postgres',
                 protocol: 'postgres',
-                logging: false,
+                logging: false, // Desativa os logs de query do Sequelize no console.
                 
                 dialectOptions: {
                     ssl: {
@@ -28,4 +35,5 @@ class Database {
     }
 }
 
+// Exporta uma única instância da classe, garantindo uma única conexão.
 module.exports = new Database();

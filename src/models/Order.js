@@ -1,6 +1,14 @@
 const database = require("../config/database");
 const User = require("./User");
 
+/**
+ * @model Order
+ * @summary Define o modelo 'Order' para a tabela de pedidos.
+ * @description Representa um pedido feito por um usuário. Armazena dados essenciais
+ * como o status do pagamento, informações para o pagamento via PIX, e a referência
+ * ao usuário. O 'publicId' (UUID) é usado para expor o pedido de forma segura em URLs,
+ * evitando a exposição do 'id' sequencial.
+*/
 const Order = database.db.define("order", {
     id: {
         type: database.db.Sequelize.INTEGER,

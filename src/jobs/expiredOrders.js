@@ -3,9 +3,22 @@ const { Order, Product } = require('../models');
 const { Op } = require('sequelize');
 const { MercadoPagoConfig, Payment } = require('mercadopago');
 
+// Configura o cliente da API do Mercado Pago.
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN });
 const payment = new Payment(client);
 
+/**
+ * @summary Job agendado (cron job) para gerenciar pedidos com pagamento expirado.
+ * @description Este script executa a cada minuto ('* * * * *') para automatizar a
+ * limpeza de pedidos pendentes que não foram pagos a tempo.
+ * O processo consiste em:
+ * 1. Buscar todos os pedidos com status 'pending' cuja data de expiração já passou.
+ * 2. Para cada pedido encontrado:
+ * a. Cancela o pagamento correspondente na API do Mercado Pago.
+ * b. Atualiza o status do pedido no banco de dados para 'cancelled'.
+ * c. Devolve os produtos do pedido de volta ao estoque, incrementando a quantidade.
+ * 3. Loga eventuais erros que ocorram durante o processo para depuração.
+*/
 cron.schedule('* * * * *', async () => {
     try {
         const expiredOrders = await Order.findAll({
